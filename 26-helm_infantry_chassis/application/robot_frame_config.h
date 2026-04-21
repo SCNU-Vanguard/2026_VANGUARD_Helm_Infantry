@@ -12,6 +12,14 @@
 #ifndef __ROBOT_FRAME_CONFIG_H__
 #define __ROBOT_FRAME_CONFIG_H__
 
+/////////////////////////////////////////////////
+#define RAD_2_RPM  9.549296586f // rad/s to rpm 60.0f/(2*PI)
+#define ECD_2_RAD  7.6699e-4f   // 2pi / 8192.0f,编码器值转弧度
+
+
+
+/////////////////////////////////////////////////
+
 #define RAD_2_DEGREE 57.2957795f    //rad/s to °/s 180/pi
 #define DEGREE_2_RAD 0.01745329252f //°/s to rad/s pi/180
 

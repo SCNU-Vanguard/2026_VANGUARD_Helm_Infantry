@@ -36,21 +36,6 @@ uint32_t chassis_high_water;
 #define __weak __attribute__((weak))
 #endif /* __weak */
 
-__weak void Chassis_Publish(void);
-
-__weak void Chassis_Init(void);
-
-__weak void Chassis_Handle_Exception(void);
-
-__weak void Chassis_Set_Mode(void);
-
-__weak void Chassis_Observer(void);
-
-__weak void Chassis_Reference(void);
-
-__weak void Chassis_Console(void);
-
-__weak void Chassis_Send_Cmd(void);
 
 osThreadId_t robot_cmd_task_handel;
 
@@ -89,52 +74,15 @@ float total_time;
  */
 static void Chassis_Task(void *argument)
 {
-	Chassis_Publish( );
-
+	
 	uint32_t time = osKernelGetTickCount( );
 
 	osDelay(2);
 
 	for (; ;)
 	{
-		/******************************底盘测试达妙收发代码*****************************/
 
-		//		static uint32_t chassis_cnt = 0;
-		//		chassis_cnt++;
-		//		if((chassis_cnt % 1500) == 0) // 100Hz
-		//		{
-		//			DM_Motor_Enable(NULL);
-		//		}
-		//		else if((chassis_cnt % 1000) == 0)
-		//		{
-		//			DM_Motor_Disable(NULL);
-		//		}
-
-		/******************************底盘测试达妙收发代码*****************************/
-
-		/******************************底盘测试运行总时长代码*****************************/
-		// TIME_ELAPSE(total_time, Chassis_Observer( );
-		// Chassis_Handle_Exception( );
-		// Chassis_Set_Mode( );
-		// Chassis_Reference( );
-		// Chassis_Console( );
-		// Chassis_Send_Cmd( );
-		// )
-		// ;
-
-		/******************************底盘测试运行总时长代码*****************************/
-		// 更新状态量
-		Chassis_Observer( );
-		// 处理异常
-		Chassis_Handle_Exception( );
-		// 设置底盘模式
-		Chassis_Set_Mode( );
-		// 更新目标量
-		Chassis_Reference( );
-		// 计算控制量
-		Chassis_Console( );
-		// 发送控制量
-		Chassis_Send_Cmd( );
+		Chassis_Ctrl();
 
 		chassis_task_diff = osKernelGetTickCount( ) - time;
 		time              = osKernelGetTickCount( );
@@ -144,64 +92,4 @@ static void Chassis_Task(void *argument)
 		chassis_high_water = uxTaskGetStackHighWaterMark(NULL);
 #endif
 	}
-}
-
-/**
- * The above functions are declared as weak and provide notes to define their specific content in other
- * files.
- */
-__weak void Chassis_Publish(void)
-{
-	/*
-	 NOTE : 在其他文件中定义具体内容
-	*/
-}
-
-__weak void Chassis_Init(void)
-{
-	/*
-	 NOTE : 在其他文件中定义具体内容
-	*/
-}
-
-__weak void Chassis_Handle_Exception(void)
-{
-	/*
-	 NOTE : 在其他文件中定义具体内容
-	*/
-}
-
-__weak void Chassis_Set_Mode(void)
-{
-	/*
-	 NOTE : 在其他文件中定义具体内容
-	*/
-}
-
-__weak void Chassis_Observer(void)
-{
-	/*
-	 NOTE : 在其他文件中定义具体内容
-	*/
-}
-
-__weak void Chassis_Reference(void)
-{
-	/*
-	 NOTE : 在其他文件中定义具体内容
-	*/
-}
-
-__weak void Chassis_Console(void)
-{
-	/*
-	 NOTE : 在其他文件中定义具体内容
-	*/
-}
-
-__weak void Chassis_Send_Cmd(void)
-{
-	/*
-	 NOTE : 在其他文件中定义具体内容
-	*/
 }

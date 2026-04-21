@@ -16,9 +16,21 @@
 
 #include "robot_frame_config.h"
 
-#if (CHASSIS_TYPE == CHASSIS_BALANCE)
-#include "balance_chassis.h"
-#endif
+
+
+//驱动轮电调ID
+#define CHASSIS_DRIVE_HELM_1 0 //舵轮1
+#define CHASSIS_DRIVE_HELM_2 2 //舵轮2
+
+#define CHASSIS_DRIVE_OMNI_1 1 //全向轮1
+#define CHASSIS_DRIVE_OMNI_2 3 //全向轮2
+
+typedef enum
+{
+	CHASSIS_STOP = 0,
+	CHASSIS_FOLLOW_GIMBAL = 1,//底盘跟随模式
+	CHASSIS_MOVE = 2,
+} chassis_mode_e;
 
 typedef struct
 {
@@ -27,10 +39,19 @@ typedef struct
 
 typedef struct
 {
-	/* data */
-	
+	float vx;//线速度
+	float vy;
+	float vw;//底盘角速度，rad/s,顺时针为正
+
+	float vw_follow;//底盘跟随时加速度
+
+	chassis_mode_e chassis_mode;
+
 }__attribute__((packed)) chassis_cmd_t;
 
 extern void Chassis_Init(void);
+void Chassis_Enable(void);	
+void Chassis_Disable(void);
+void Chassis_Ctrl(void);
 
 #endif /* __CHASSIS_H__ */

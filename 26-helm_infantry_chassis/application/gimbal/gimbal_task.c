@@ -72,7 +72,7 @@ uint32_t gimbal_task_diff;
 
 static void Gimbal_Task(void *argument)
 {
-	Gimbal_Publish( );
+	//Gimbal_Publish( );
 
 	uint32_t time = osKernelGetTickCount( );
 
@@ -81,17 +81,20 @@ static void Gimbal_Task(void *argument)
 	for (; ;)
 	{
 		// 更新状态量
-		Gimbal_Observer( );
-		// 处理异常
-		Gimbal_Handle_Exception( );
-		// 设置云台模式
-		Gimbal_Set_Mode( );
-		// 更新目标量
-		Gimbal_Reference( );
-		// 计算控制量
-		Gimbal_Console( );
-		// 发送控制量
-		Gimbal_Send_Cmd( );
+		// Gimbal_Observer( );
+		// // 处理异常
+		// Gimbal_Handle_Exception( );
+		// // 设置云台模式
+		// Gimbal_Set_Mode( );
+		// // 更新目标量
+		// Gimbal_Reference( );
+		// // 计算控制量
+		// Gimbal_Console( );
+		// // 发送控制量
+		// Gimbal_Send_Cmd( );
+
+
+		Gimbal_DM6006_Ctrl( );
 
 		gimbal_task_diff = osKernelGetTickCount( ) - time;
 		time             = osKernelGetTickCount( );

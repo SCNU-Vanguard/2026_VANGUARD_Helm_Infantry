@@ -126,45 +126,45 @@ void StartDefaultTask(void *argument)
   /* USER CODE BEGIN StartDefaultTask */
 	uint8_t default_init_flag = 0;
 	WS2812_Control(ws2812_instance, GREEN_WS2812_COLOR);
-	Buzzer_Play(StartUP_sound, 0);
+	Buzzer_Play(Super_Mario_sound, 0);
 	osDelay(1500);
 	/* Infinite loop */
 	for (;;)
 	{
 		static uint8_t music_lock = 0;
-		if (default_init_flag == 0)
-		{
-			if (rc_data->online == 0)
-			{
-				Buzzer_Play(No_RC_sound, 0);
-				music_lock = 1;
-			}
-			else if (rc_data->online == 1)
-			{
-				Buzzer_Play(Yes_RC_sound, 0);
-				music_lock = 0;
-			}
-			default_init_flag = 1;
-		}
-		else
-		{
-			if (rc_data->online == 0)
-			{
-				if (music_lock == 0)
-				{
-					Buzzer_Play(No_RC_sound, 0);
-					music_lock = 1;
-				}
-			}
-			else if (rc_data->online == 1)
-			{
-				if (music_lock == 1)
-				{
-					Buzzer_Play(Yes_RC_sound, 0);
-					music_lock = 0;
-				}
-			}
-		}
+//		if (default_init_flag == 0)
+//		{
+//			if (rc_data->online == 0)
+//			{
+//				Buzzer_Play(No_RC_sound, 0);
+//				music_lock = 1;
+//			}
+//			else if (rc_data->online == 1)
+//			{
+//				Buzzer_Play(Yes_RC_sound, 0);
+//				music_lock = 0;
+//			}
+//			default_init_flag = 1;
+//		}
+//		else
+//		{
+//			if (rc_data->online == 0)
+//			{
+//				if (music_lock == 0)
+//				{
+//					Buzzer_Play(No_RC_sound, 0);
+//					music_lock = 1;
+//				}
+//			}
+//			else if (rc_data->online == 1)
+//			{
+//				if (music_lock == 1)
+//				{
+//					Buzzer_Play(Yes_RC_sound, 0);
+//					music_lock = 0;
+//				}
+//			}
+//		}
 
 		beat++;
 		if ((beat % 120000) == 0)

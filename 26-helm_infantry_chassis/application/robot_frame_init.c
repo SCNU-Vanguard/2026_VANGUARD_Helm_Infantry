@@ -39,8 +39,6 @@
 #include "bsp_dwt.h"
 #include "bsp_usart.h"
 
-#include "balance_chassis.h"
-
 #include "BMI088driver.h"
 
 float init_time;
@@ -67,15 +65,17 @@ static void Frame_Device_Init(void)
 	// BMI088_Init(&hspi2,0);
 	bmi088_h7 = BMI088_Register(&bmi088_init_h7);
 
-	rc_data = WFLY_SBUS_Register( );
+//	rc_data = WFLY_SBUS_Register( );
 	
-	VOFA_Register( );
+//	VOFA_Register( );
 
 	/******************************module模块初始化*****************************/
 
 	/******************************application组件初始化*****************************/
-
+	
 	Chassis_Init( );
+
+	Gimbal_DM6006_Init( );
 
 	/******************************application组件初始化*****************************/
 }

@@ -259,7 +259,7 @@ void DM_Speed_Ctrl(DM_motor_instance_t *motor, float vel)
 {
 	uint8_t *vbuf;
 
-	vbuf = (uint8_t *) &vel;
+	vbuf = (uint8_t *) &vel;//指针类型转换，将float类型的速度值转换成字节数组，方便通过CAN发送
 
 	motor->motor_can_instance->tx_buff[0] = *vbuf;
 	motor->motor_can_instance->tx_buff[1] = *(vbuf + 1);
