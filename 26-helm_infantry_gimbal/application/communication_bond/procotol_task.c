@@ -22,7 +22,9 @@
 
 #include "message_center.h"
 
-#define PROCOTOL_TASK_PERIOD 10 // ms
+#include "VPC.h"
+
+#define PROCOTOL_TASK_PERIOD 1 // ms
 
 osThreadId_t procotol_task_handel;
 
@@ -52,11 +54,16 @@ static void Procotol_Task(void *argument)
 
     for (; ;)
     {
-        VOFA_Display_IMU( );
-        RC_Receive_Control( );
+        //485通讯
+        Serial_485_Receive_Control();
+		Serial_485_Send_Control();
+
+        //上位机通讯
+        VPC_UpdatePackets();
 
         procotol_task_diff = osKernelGetTickCount( ) - time;
         time               = osKernelGetTickCount( );
         osDelayUntil(time + PROCOTOL_TASK_PERIOD);
     }
 }
+

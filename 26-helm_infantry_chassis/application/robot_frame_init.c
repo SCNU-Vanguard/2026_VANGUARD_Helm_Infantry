@@ -35,15 +35,14 @@
 #include "remote_control.h"
 #include "wfly_control.h"
 #include "vofa.h"
+#include "referee.h"
 
 #include "bsp_dwt.h"
 #include "bsp_usart.h"
+#include "rs485.h"
 
-#include "BMI088driver.h"
+Referee_InfoTypedef	*referee_data;
 
-float init_time;
-
-wfly_t *rc_data;
 
 static void Frame_MCU_Init(void)
 {
@@ -65,9 +64,8 @@ static void Frame_Device_Init(void)
 	// BMI088_Init(&hspi2,0);
 	bmi088_h7 = BMI088_Register(&bmi088_init_h7);
 
-//	rc_data = WFLY_SBUS_Register( );
-	
-//	VOFA_Register( );
+	HAL_UART_Receive_IT(&huart2, &uart2_current_byte, 1);
+	//referee_data = Referee_Init(&huart1);
 
 	/******************************module模块初始化*****************************/
 
@@ -76,6 +74,8 @@ static void Frame_Device_Init(void)
 	Chassis_Init( );
 
 	Gimbal_DM6006_Init( );
+
+
 
 	/******************************application组件初始化*****************************/
 }

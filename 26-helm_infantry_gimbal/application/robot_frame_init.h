@@ -12,8 +12,11 @@
 #ifndef __ROBOT_FRAME_INIT_H__
 #define __ROBOT_FRAME_INIT_H__
 
-#include <stdint.h>
+#include "remote_vt03.h"
+
 
 extern void Robot_Frame_Init(void);
+
+extern VT03_ctrl_t *rc_data;
 
 #endif /* __ROBOT_FRAME_INIT_H__ */

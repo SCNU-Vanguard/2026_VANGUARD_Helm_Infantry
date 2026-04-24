@@ -118,7 +118,7 @@ void MX_FREERTOS_Init(void) {
   * @retval None
   */
 /******************************这里是塞💩的地方，请随便塞💩*****************************/
-extern wfly_t *rc_data;
+
 uint32_t beat = 0;
 /* USER CODE END Header_StartDefaultTask */
 void StartDefaultTask(void *argument)
@@ -132,39 +132,39 @@ void StartDefaultTask(void *argument)
 	for (;;)
 	{
 		static uint8_t music_lock = 0;
-		if (default_init_flag == 0)
-		{
-			if (rc_data->online == 0)
-			{
-				Buzzer_Play(No_RC_sound, 0);
-				music_lock = 1;
-			}
-			else if (rc_data->online == 1)
-			{
-				Buzzer_Play(Yes_RC_sound, 0);
-				music_lock = 0;
-			}
-			default_init_flag = 1;
-		}
-		else
-		{
-			if (rc_data->online == 0)
-			{
-				if (music_lock == 0)
-				{
-					Buzzer_Play(No_RC_sound, 0);
-					music_lock = 1;
-				}
-			}
-			else if (rc_data->online == 1)
-			{
-				if (music_lock == 1)
-				{
-					Buzzer_Play(Yes_RC_sound, 0);
-					music_lock = 0;
-				}
-			}
-		}
+//		if (default_init_flag == 0)
+//		{
+//			if (rc_data->online == 0)
+//			{
+//				Buzzer_Play(No_RC_sound, 0);
+//				music_lock = 1;
+//			}
+//			else if (rc_data->online == 1)
+//			{
+//				Buzzer_Play(Yes_RC_sound, 0);
+//				music_lock = 0;
+//			}
+//			default_init_flag = 1;
+//		}
+//		else
+//		{
+//			if (rc_data->online == 0)
+//			{
+//				if (music_lock == 0)
+//				{
+//					Buzzer_Play(No_RC_sound, 0);
+//					music_lock = 1;
+//				}
+//			}
+//			else if (rc_data->online == 1)
+//			{
+//				if (music_lock == 1)
+//				{
+//					Buzzer_Play(Yes_RC_sound, 0);
+//					music_lock = 0;
+//				}
+//			}
+//		}
 
 		beat++;
 		if ((beat % 120000) == 0)

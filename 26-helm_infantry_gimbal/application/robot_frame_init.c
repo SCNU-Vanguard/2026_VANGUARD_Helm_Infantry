@@ -43,9 +43,13 @@
 
 #include "BMI088driver.h"
 
+#include "remote_vt03.h"
+
+#include "VPC.h"
+
 float init_time;
 
-wfly_t *rc_data;
+VT03_ctrl_t *rc_data;
 
 static void Frame_MCU_Init(void)
 {
@@ -67,15 +71,19 @@ static void Frame_Device_Init(void)
 	// BMI088_Init(&hspi2,0);
 	bmi088_h7 = BMI088_Register(&bmi088_init_h7);
 
-	rc_data = WFLY_SBUS_Register( );
+	rc_data = Vt03_Control_Init(&huart10);
 	
-	VOFA_Register( );
 
 	/******************************module模块初始化*****************************/
 
 	/******************************application组件初始化*****************************/
 
-	Chassis_Init( );
+	Gimbal_Init();
+	
+	Shoot_Init( );
+
+	VPC_Init( );
+
 
 	/******************************application组件初始化*****************************/
 }

@@ -83,4 +83,6 @@ extern void INS_Init(void);
 
 extern void INS_Calculate(float dt);
 
+extern INS_behaviour_t INS;
+
 #endif /* __INS_H__ */

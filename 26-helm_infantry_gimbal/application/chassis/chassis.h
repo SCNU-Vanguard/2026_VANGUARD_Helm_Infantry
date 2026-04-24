@@ -20,6 +20,14 @@
 #include "balance_chassis.h"
 #endif
 
+
+typedef enum
+{
+	CHASSIS_STOP = 0,
+	CHASSIS_FOLLOW_GIMBAL = 1,//底盘跟随模式
+	CHASSIS_MOVE = 2,
+} chassis_move_mode_e;
+
 typedef struct
 {
 	/* data */
@@ -27,10 +35,16 @@ typedef struct
 
 typedef struct
 {
-	/* data */
-	
+	float vx;//线速度
+	float vy;
+	float vw;//底盘角速度，rad/s,顺时针为正
+
+	float vw_follow;//底盘跟随时加速度
+
+	chassis_move_mode_e chassis_mode;//用于传下底盘
+
 }__attribute__((packed)) chassis_cmd_t;
 
-extern void Chassis_Init(void);
+extern chassis_cmd_t *chassis_cmd;
 
 #endif /* __CHASSIS_H__ */

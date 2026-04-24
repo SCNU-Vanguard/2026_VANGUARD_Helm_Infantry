@@ -17,54 +17,78 @@
 #include "DM_motor.h"
 #include "DJI_motor.h"
 
-/******************************DJI电机底盘初始化实例*****************************/
+#include "robot_frame_config.h"
+#include "robot_frame_init.h"
 
-// static DJI_motor_instance_t *chassis_motor[4];
+static chassis_cmd_t chassis_cmd_storage;
+chassis_cmd_t *chassis_cmd = &chassis_cmd_storage;//静态初始化，防止空指针
 
-// motor_init_config_t chassis_motor_config = {
-//      .controller_param_init_config = {
-// 		.angle_PID = NULL,
-// 		.speed_PID = NULL,
-// 		.current_PID = NULL,
-// 		.torque_PID = NULL,
 
-// 		.other_angle_feedback_ptr = NULL,
-// 		.other_speed_feedback_ptr = NULL,
+void Chassis_Set_Mode(void)
+{
+    switch(rc_data->rc.gear_shift)
+    {
+        case STOP_MODE:
+            chassis_cmd -> chassis_mode = CHASSIS_STOP;
+            break;
 
-// 		.angle_feedforward_ptr = NULL,
-// 		.speed_feedforward_ptr = NULL,
-// 		.current_feedforward_ptr = NULL,
-// 		.torque_feedforward_ptr = NULL,
+        case REMOTE_MODE:
+            chassis_cmd -> chassis_mode = CHASSIS_FOLLOW_GIMBAL;
+            break;
 
-// 		.pid_ref = 0.0f,
-// 	},
-// 	.controller_setting_init_config = {
-// 		.close_loop_type = TORQUE_LOOP,
+        case KEYBOARD_MODE:
+            chassis_cmd -> chassis_mode = CHASSIS_MOVE;
+            break;
+        
+        default:
+            chassis_cmd -> chassis_mode = CHASSIS_STOP;
+            break;
+    }
+}
 
-// 		.motor_reverse_flag = MOTOR_DIRECTION_NORMAL,
-// 		.feedback_reverse_flag = FEEDBACK_DIRECTION_NORMAL,
 
-// 		.angle_feedback_source = MOTOR_FEED,
-// 		.speed_feedback_source = MOTOR_FEED,
+void Chassis_Console(void)
+{
 
-// 		.feedforward_flag = FEEDFORWARD_NONE,
-// 	},
+    switch( rc_data->rc.gear_shift )
+    {
+        case STOP_MODE:
+        {
+            
+            chassis_cmd -> vx = 0.0f;
+            chassis_cmd -> vy = 0.0f;
+            chassis_cmd -> vw = 0.0f;
 
-// 	.motor_type = M3508,
+            break;
+        }
+            
 
-// 	.can_init_config = {
-// 		.can_handle = &hfdcan3,
-// 		.tx_id = 0x00,
-// 		.rx_id = 0x00,
-// 	},
+        case REMOTE_MODE:
+        {
+            
+            chassis_cmd -> vx = rc_data->rc.rocker_l1 * REMOTE_CHASSIS_SENSITIVITY_VX;
+            chassis_cmd -> vy = rc_data->rc.rocker_l_ * REMOTE_CHASSIS_SENSITIVITY_VY;
+            chassis_cmd -> vw = rc_data->rc.dial * REMOTE_CHASSIS_SENSITIVITY_VW;
 
-// 	.motor_control_type = TORQUE_LOOP_CONTROL,
-// };
+            break;
+        }
+            
 
-//   for (uint8_t i = 0; i < 4; i++)
-//   {
-//     chassis_motor_config.can_init_config.tx_id = i + 1;
-//     chassis_motor[i] = DJI_Motor_Init(&chassis_config);
-//   }
+        case KEYBOARD_MODE:
+        {
+            
+            break;
+        }
+            
+        
+        default:
+        {
+            chassis_cmd -> vx = 0.0f;
+            chassis_cmd -> vy = 0.0f;
+            chassis_cmd -> vw = 0.0f;
+            break;
+        }
+    }
 
-/******************************DJI电机底盘初始化实例*****************************/
+
+}

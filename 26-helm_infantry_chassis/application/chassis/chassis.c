@@ -20,7 +20,7 @@
 #include "DJI_motor.h"
 
 /******************************底盘相关参数*****************************/
-chassis_cmd_t chassis_cmd;
+chassis_cmd_t * chassis_cmd;
 
 /******************************DJI电机底盘初始化实例*****************************/
 DJI_motor_instance_t *chassis_drive[4];//4*驱动轮   ，
@@ -63,7 +63,6 @@ PID_t chassis_follow_gimbal_angle_pid = {
     .integral_limit = 0.0f,
     .dead_band = 0.0f,
 };
-
 
 
 motor_init_config_t chassis_m3508_init = {
@@ -164,8 +163,8 @@ void Chassis_Init(void)
 
     for (uint8_t i = 0; i < 2; ++i)
     {
-				chassis_gm6020_init.can_init_config.tx_id = i + 1;
-				chassis_gm6020_init.can_init_config.rx_id = i + 1;
+        chassis_gm6020_init.can_init_config.tx_id = i + 1;
+        chassis_gm6020_init.can_init_config.rx_id = i + 1;
         chassis_helm[i] = DJI_Motor_Init(&chassis_gm6020_init);
         DJI_Motor_Enable(chassis_helm[i]);
     }
@@ -328,28 +327,28 @@ static void Chassis_Follow(chassis_cmd_t *cmd,float gimbal_current_angle , float
 void Chassis_Ctrl(void)
 {
 
-    switch (chassis_cmd.chassis_mode)
+    switch (chassis_cmd->chassis_mode)
     {
         case CHASSIS_STOP:
             Chassis_Disable();
-            chassis_cmd.vx = 0.0f;
-            chassis_cmd.vy = 0.0f;
-            chassis_cmd.vw = 0.0f;
-            chassis_cmd.vw_follow = 0.0f;
+            chassis_cmd->vx = 0.0f;
+            chassis_cmd->vy = 0.0f;
+            chassis_cmd->vw = 0.0f;
+            chassis_cmd->vw_follow = 0.0f;
             break;
 
         case CHASSIS_FOLLOW_GIMBAL:
             Chassis_Enable();
 
-            Chassis_Follow(&chassis_cmd, gimbal_dm6006->receive_data.position, CHASSIS_FORWARD_ZERO);
-            Gimbal_To_Chassis_Frame(&chassis_cmd, gimbal_dm6006->receive_data.position, CHASSIS_FORWARD_ZERO);
-            Chassis_Calculate(&chassis_cmd);
+            Chassis_Follow(chassis_cmd, gimbal_dm6006->receive_data.position, CHASSIS_FORWARD_ZERO);//底盘跟随
+            Gimbal_To_Chassis_Frame(chassis_cmd, gimbal_dm6006->receive_data.position, CHASSIS_FORWARD_ZERO);
+            Chassis_Calculate(chassis_cmd);
             break;
 
         case CHASSIS_MOVE:
             Chassis_Enable();
-            Gimbal_To_Chassis_Frame(&chassis_cmd, gimbal_dm6006->receive_data.position, CHASSIS_FORWARD_ZERO);
-            Chassis_Calculate(&chassis_cmd);
+            Gimbal_To_Chassis_Frame(chassis_cmd, gimbal_dm6006->receive_data.position, CHASSIS_FORWARD_ZERO);
+            Chassis_Calculate(chassis_cmd);
             break;
 
         default:

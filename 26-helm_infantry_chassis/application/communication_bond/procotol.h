@@ -12,7 +12,7 @@
 #ifndef __PROCOTOL_H__
 #define __PROCOTOL_H__
 
-#include <stdint.h>
+
 
 typedef struct
 {
@@ -24,8 +24,8 @@ typedef struct
 	/* data */
 }__attribute__((packed)) procotol_cmd_t;
 
-extern void VOFA_Display_IMU(void);
+void Serial_485_Receive_Control(void);
 
-extern void RC_Receive_Control(void);
+void Serial_485_Send_Control(void);
 
 #endif /* __PROCOTOL_H__ */

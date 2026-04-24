@@ -14,6 +14,14 @@
 
 #include <stdint.h>
 
+
+typedef enum{
+	SHOOT_MODE_STOP = 0,
+	SHOOT_MODE_MANUAL = 1,
+	SHOOT_MODE_AUTO = 2,
+
+}shoot_mode_e;
+
 typedef struct
 {
 	/* data */
@@ -21,7 +29,21 @@ typedef struct
 
 typedef struct
 {
+	/* mode */
+	shoot_mode_e mode;
+
 	/* data */
+	float shoot_frq;//Hz 
+	float shoot_v;//rpm
+
 }__attribute__((packed)) shoot_cmd_t;
+
+
+void Shoot_Enable(void);
+void Shoot_Disable(void);
+void Shoot_Init(void);
+void Shoot_Set_All_Friction(int16_t speed);
+
+extern shoot_cmd_t *shoot_cmd;
 
 #endif /* __SHOOT_H__ */

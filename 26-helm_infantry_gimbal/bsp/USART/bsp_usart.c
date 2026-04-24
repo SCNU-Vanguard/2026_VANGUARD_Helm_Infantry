@@ -238,8 +238,8 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 			{
 				__HAL_UART_CLEAR_OREFLAG(usart_instances[i]->usart_handle);
 			}
-			HAL_UART_DeInit(usart_instances[i]->usart_handle);  // 关闭串口
-			HAL_UART_Init(usart_instances[i]->usart_handle);    // 重新初始化串口
+//			HAL_UART_DeInit(usart_instances[i]->usart_handle);  // 关闭串口
+//			HAL_UART_Init(usart_instances[i]->usart_handle);    // 重新初始化串口
 			HAL_UARTEx_ReceiveToIdle_DMA(usart_instances[i]->usart_handle,
 			                             usart_instances[i]->recv_buff,
 			                             usart_instances[i]->recv_buff_size);

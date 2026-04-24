@@ -17,7 +17,6 @@
 #include "robot_frame_config.h"
 
 
-
 //驱动轮电调ID
 #define CHASSIS_DRIVE_HELM_1 0 //舵轮1
 #define CHASSIS_DRIVE_HELM_2 2 //舵轮2
@@ -30,7 +29,7 @@ typedef enum
 	CHASSIS_STOP = 0,
 	CHASSIS_FOLLOW_GIMBAL = 1,//底盘跟随模式
 	CHASSIS_MOVE = 2,
-} chassis_mode_e;
+} chassis_move_mode_e;
 
 typedef struct
 {
@@ -45,13 +44,16 @@ typedef struct
 
 	float vw_follow;//底盘跟随时加速度
 
-	chassis_mode_e chassis_mode;
+	chassis_move_mode_e chassis_mode;//用于传下底盘
 
 }__attribute__((packed)) chassis_cmd_t;
 
-extern void Chassis_Init(void);
+
+void Chassis_Init(void);
 void Chassis_Enable(void);	
 void Chassis_Disable(void);
 void Chassis_Ctrl(void);
+
+extern chassis_cmd_t *chassis_cmd;//底盘相关控制指令
 
 #endif /* __CHASSIS_H__ */

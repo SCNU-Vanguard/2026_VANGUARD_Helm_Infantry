@@ -19,6 +19,10 @@
 gimbal_cmd_t *gimbal_cmd;//云台相关控制指令
 DM_motor_instance_t *gimbal_dm6006;//云台电机
 
+//避免对 packed 成员取址导致未对齐指针告警
+static float gimbal_current_angle_feedback = 0.0f;
+static float gimbal_current_yaw_acc_feedback = 0.0f;
+
 /*云台电机*/
 PID_t gimbal_dm6006_angle_pid = {
     .kp = 0,
@@ -48,6 +52,8 @@ motor_init_config_t gimbal_dm6006_init = {
 
         .other_angle_feedback_ptr = NULL,
         .other_speed_feedback_ptr = NULL,
+
+
         .angle_feedforward_ptr = NULL,
         .speed_feedforward_ptr = NULL,
         .current_feedforward_ptr = NULL,
@@ -64,8 +70,11 @@ motor_init_config_t gimbal_dm6006_init = {
         .motor_reverse_flag = MOTOR_DIRECTION_NORMAL,
         .feedback_reverse_flag = FEEDBACK_DIRECTION_NORMAL,
 
-        .angle_feedback_source = MOTOR_FEED,
-        .speed_feedback_source = MOTOR_FEED,
+        // .angle_feedback_source = MOTOR_FEED,
+        // .speed_feedback_source = MOTOR_FEED,
+        
+        .angle_feedback_source = OTHER_FEED,//上板传入数据
+        .speed_feedback_source = OTHER_FEED,
 
         .feedforward_flag = FEEDFORWARD_NONE,
     },
@@ -82,6 +91,11 @@ motor_init_config_t gimbal_dm6006_init = {
 
 void Gimbal_DM6006_Init(void)
 {
+	
+	//改用上板传下的IMU角度和角加速度作为反馈
+    gimbal_dm6006_init.controller_param_init_config.other_angle_feedback_ptr = &gimbal_current_angle_feedback;
+    gimbal_dm6006_init.controller_param_init_config.other_speed_feedback_ptr = &gimbal_current_yaw_acc_feedback;
+	
     gimbal_dm6006 = DM_Motor_Init(&gimbal_dm6006_init);
 
     DM_Motor_Enable(gimbal_dm6006);//发送使能信号
@@ -106,12 +120,15 @@ void Gimbal_Enable(void)
 void Gimbal_DM6006_Ctrl(void)
 {
     /* 野指针保护 */
-    if( gimbal_dm6006 == NULL || gimbal_cmd == NULL || gimbal_cmd->target_angle == NULL )
+    if( gimbal_dm6006 == NULL || gimbal_cmd == NULL || gimbal_cmd->target_angle_yaw == NULL )
     {
         return;
     }
 
-    if( gimbal_cmd->target_angle < -2 * PI || gimbal_cmd->target_angle > 2 * PI )
+    gimbal_current_angle_feedback = gimbal_cmd->current_angle_yaw;
+    gimbal_current_yaw_acc_feedback = gimbal_cmd->current_yaw_acc;
+
+    if( fabsf(gimbal_cmd->target_angle_yaw) > 2 * PI || fabsf(gimbal_current_angle_feedback) > 2 * PI )
     {
         return;
     }
@@ -124,15 +141,13 @@ void Gimbal_DM6006_Ctrl(void)
             Gimbal_Disable( );
             break;
 
-        case GIMBAL_MODE_MOVE:
+        case GIMBAL_MODE_REMOTE:
             Gimbal_Enable( );
-
             //DM_Motor_SetTar(gimbal_dm6006, gimbal_cmd->target_angle);
             break;
 
-        case GIMBAL_MODE_AUTO:
+        case GIMBAL_MODE_KEYBOARD:
             Gimbal_Enable( );
-
             //DM_Motor_SetTar(gimbal_dm6006, gimbal_cmd->target_angle);
             break;
 
