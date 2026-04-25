@@ -14,9 +14,8 @@
 #include "INS.h"
 
 
-extern void VPC_Init(void);
-extern void VPC_UpdatePackets(void);
-
+void VPC_Init(void);
+void VPC_UpdatePackets(void);
+void Choose_VPC_Type(void);
 
 #endif /* __VPC_H__ */
-

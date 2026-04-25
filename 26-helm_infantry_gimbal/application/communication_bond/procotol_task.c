@@ -60,6 +60,7 @@ static void Procotol_Task(void *argument)
 
         //上位机通讯
         VPC_UpdatePackets();
+        Choose_VPC_Type();
 
         procotol_task_diff = osKernelGetTickCount( ) - time;
         time               = osKernelGetTickCount( );

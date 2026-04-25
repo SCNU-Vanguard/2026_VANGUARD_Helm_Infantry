@@ -5,8 +5,7 @@
 #include "usart.h"
 #include "CRC.h"
 
-//#include "remote.h"
-//#include "usbd_cdc_if.h"
+#include "usbd_cdc_if.h"
 
 /*使用普通串口/虚拟串口*/
 #define NORMAL_UART 0

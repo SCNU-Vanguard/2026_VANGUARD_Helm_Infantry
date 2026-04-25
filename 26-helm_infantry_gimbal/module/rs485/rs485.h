@@ -6,6 +6,7 @@
 #define FRAME_HEADER 0xA5
 #define FRAME_TAILER 0x5A
 
+//TODO: 精简，添加CRC16校验，看门狗重启
 typedef struct
 {
     uint8_t frame_header;

@@ -32,8 +32,8 @@ typedef struct
     float shoot_frq; // Hz
     
     /*运动模式*/
-    uint8_t chassis_mode;//3
-    uint8_t gimbal_mode;//3
+    uint8_t chassis_mode;//2
+    uint8_t gimbal_mode;//2
     uint8_t shoot_mode; //0：停止，1：拨打
 
 
