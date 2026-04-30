@@ -23,6 +23,7 @@
 #include "message_center.h"
 
 #include "VPC.h"
+#include "Serial.h"
 
 #define PROCOTOL_TASK_PERIOD 1 // ms
 
@@ -59,8 +60,9 @@ static void Procotol_Task(void *argument)
 		Serial_485_Send_Control();
 
         //上位机通讯
-        VPC_UpdatePackets();
         Choose_VPC_Type();
+        VPC_UpdatePackets();
+        VS_Pack_And_Send_Data_ROS2(&vs_aim_packet_to_nuc);
 
         procotol_task_diff = osKernelGetTickCount( ) - time;
         time               = osKernelGetTickCount( );

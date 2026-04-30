@@ -128,9 +128,11 @@ static void Vt03_Control_Rx_Callback(void)
     if(vt03_usart_instance->recv_buff[0] != 0xA9 || vt03_usart_instance->recv_buff[1] != 0x53 
 	 	|| Verify_CRC16_Check_Sum(vt03_usart_instance->recv_buff, REMOTE_VT03_FRAME_SIZE) == 0)
 	{
-			return;
+		vt03_ctrl[VT03_TEMP].online = 0;
+		return;
 	}
 	Vt03_Control_Resolve(vt03_usart_instance->recv_buff); // 进行协议解析
+	vt03_ctrl[VT03_TEMP].online = 1;
 }
 
 /**
@@ -138,6 +140,7 @@ static void Vt03_Control_Rx_Callback(void)
  */
 static void Vt03_RC_Lost_Callback(void *id)
 {
+	vt03_ctrl[VT03_TEMP].online = 0;
 	memset(vt03_ctrl, 0, sizeof(vt03_ctrl)); // 清空遥控器数据
 	USART_Service_Init(vt03_usart_instance); // 尝试重新启动接收
 }

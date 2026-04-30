@@ -49,6 +49,7 @@ typedef struct
 	gimbal_neck_e neck_state; //脖子状态
 	gimbal_auto_e auto_state; //自动模式状态
 
+	uint8_t gimbal_climb_flag;//云台使能标志位 , 只用于过隧道
 	/* data */
 	float target_angle_head;//rad
 	float current_angle_head;

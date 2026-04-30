@@ -1,7 +1,9 @@
 2026_vanguard_frame/shoot.o: ..\application\shoot\shoot.c \
   C:\Keil5\ARM\ARMCLANG\include\string.h \
-  C:\Keil5\ARM\ARMCLANG\include\stdlib.h ..\application\shoot\shoot.h \
+  C:\Keil5\ARM\ARMCLANG\include\stdlib.h \
+  ..\Middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS_V2\cmsis_os2.h \
   C:\Keil5\ARM\ARMCLANG\include\stdint.h \
+  C:\Keil5\ARM\ARMCLANG\include\stddef.h ..\application\shoot\shoot.h \
   ..\module\motor\SHOOT_motor\shoot_motor.h ..\module\motor\drv_motor.h \
   ..\algorithm\controller\PID\pid.h C:\Keil5\ARM\ARMCLANG\include\math.h \
   ..\Middlewares\ST\ARM\DSP\Inc\arm_math.h \
@@ -23,7 +25,6 @@
   D:\Document\RM\2026_code\2026_VANGUARD_Helm_Infantry\26-helm_infantry_gimbal\Drivers\CMSIS\Include\mpu_armv7.h \
   ..\Drivers\CMSIS\Device\ST\STM32H7xx\Include\system_stm32h7xx.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h \
-  C:\Keil5\ARM\ARMCLANG\include\stddef.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc_ex.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_gpio.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_gpio_ex.h \
@@ -52,7 +53,6 @@
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_usb.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pcd_ex.h \
   ..\Core\Inc\fdcan.h ..\module\defense_center\defense_center.h \
-  ..\application\gimbal\gimbal.h ..\application\robot_frame_config.h \
-  ..\application\robot_frame_init.h ..\module\remote\VT03\remote_vt03.h \
-  ..\bsp\USART\bsp_usart.h ..\Core\Inc\usart.h \
-  ..\algorithm\basic_function\CRC.h
+  ..\application\robot_frame_config.h ..\application\robot_frame_init.h \
+  ..\module\remote\VT03\remote_vt03.h ..\bsp\USART\bsp_usart.h \
+  ..\Core\Inc\usart.h ..\algorithm\basic_function\CRC.h

@@ -51,6 +51,9 @@ float init_time;
 
 VT03_ctrl_t *rc_data;
 
+uint8_t key_flag = 0;//是否使用键鼠标志位
+uint8_t keyboard_enable_flag = 0;//键鼠模式使能标志位
+
 static void Frame_MCU_Init(void)
 {
 	__disable_irq( );
@@ -131,4 +134,38 @@ void Robot_Frame_Init(void)
 	Frame_Task_Init( );
 
 	// __enable_irq( );
+}
+
+void Robot_Frame_Update_Keyboard_Mode(void)
+{
+	if (rc_data == NULL)
+	{
+		return;
+	}
+
+	if (key_flag == 0U)
+	{
+		for (uint8_t i = 0U; i < 16U; i++)
+		{
+			if (rc_data->key_count[VT03_KEY_PRESS][i] > 0U)
+			{
+				key_flag = 1U;
+				break;
+			}
+		}
+
+		if (key_flag == 0U)
+		{
+			return;
+		}
+	}
+
+	if (rc_data->key[VT03_KEY_PRESS_WITH_CTRL].b == 1U)
+	{
+		keyboard_enable_flag = 0U;
+	}
+	else if (rc_data->key[VT03_KEY_PRESS].b == 1U)
+	{
+		keyboard_enable_flag = 1U;
+	}
 }

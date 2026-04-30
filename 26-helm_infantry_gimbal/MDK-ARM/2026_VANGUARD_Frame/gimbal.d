@@ -2,9 +2,9 @@
   C:\Keil5\ARM\ARMCLANG\include\string.h \
   C:\Keil5\ARM\ARMCLANG\include\stdlib.h \
   C:\Keil5\ARM\ARMCLANG\include\stdint.h ..\application\gimbal\gimbal.h \
-  ..\application\robot_frame_init.h ..\module\remote\VT03\remote_vt03.h \
-  ..\bsp\USART\bsp_usart.h ..\Core\Inc\main.h \
-  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
+  ..\application\shoot\shoot.h ..\application\robot_frame_init.h \
+  ..\module\remote\VT03\remote_vt03.h ..\bsp\USART\bsp_usart.h \
+  ..\Core\Inc\main.h ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
   ..\Core\Inc\stm32h7xx_hal_conf.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_def.h \
@@ -49,7 +49,14 @@
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_usb.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pcd_ex.h \
   ..\Core\Inc\usart.h ..\algorithm\basic_function\CRC.h \
-  ..\application\robot_frame_config.h \
+  ..\application\robot_frame_config.h ..\module\VPC\Serial.h \
+  ..\USB_DEVICE\App\usbd_cdc_if.h \
+  ..\Middlewares\ST\STM32_USB_Device_Library\Class\CDC\Inc\usbd_cdc.h \
+  ..\Middlewares\ST\STM32_USB_Device_Library\Core\Inc\usbd_ioreq.h \
+  ..\Middlewares\ST\STM32_USB_Device_Library\Core\Inc\usbd_def.h \
+  ..\USB_DEVICE\Target\usbd_conf.h C:\Keil5\ARM\ARMCLANG\include\stdio.h \
+  ..\Middlewares\ST\STM32_USB_Device_Library\Core\Inc\usbd_core.h \
+  ..\Middlewares\ST\STM32_USB_Device_Library\Core\Inc\usbd_ctlreq.h \
   ..\module\motor\DM_motor\DM_motor.h ..\module\motor\drv_motor.h \
   ..\algorithm\controller\PID\pid.h \
   ..\Middlewares\ST\ARM\DSP\Inc\arm_math.h \

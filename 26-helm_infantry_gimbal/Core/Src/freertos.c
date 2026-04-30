@@ -129,11 +129,15 @@ void StartDefaultTask(void *argument)
   /* USER CODE BEGIN StartDefaultTask */
 	uint8_t default_init_flag = 0;
 	WS2812_Control(ws2812_instance, GREEN_WS2812_COLOR);
-	Buzzer_Play(StartUP_sound, 0);
+  
+	Buzzer_Play(Super_Mario_sound, 0);
 	osDelay(1500);
 	/* Infinite loop */
 	for (;;)
 	{
+    //检测键鼠模式
+    ROBOT_FRAME_KEYBOARD_UPDATE();
+
 		static uint8_t music_lock = 0;
 //		if (default_init_flag == 0)
 //		{

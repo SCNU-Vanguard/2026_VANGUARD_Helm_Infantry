@@ -24,10 +24,13 @@ typedef struct
     /*射击参数*/
     float shoot_frq; // Hz
     
-    // /*运动模式*/
+    /*运动模式*/
     uint8_t chassis_mode;//3
     uint8_t gimbal_mode;//3
     uint8_t shoot_mode; //0：停止，1：拨打
+
+    /* 使能标志位 */ 
+    uint8_t enable_flag;
 
 
     uint8_t frame_tailer;

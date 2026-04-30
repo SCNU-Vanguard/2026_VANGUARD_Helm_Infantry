@@ -80,7 +80,7 @@ typedef struct
 
 	DJI_motor_callback_t receive_data;            // 电机测量值
 	DJI_motor_fillmessage_t transmit_data;  // 电机设定值
-	DJI_motor_feedback_data_e motor_feedback;
+	DJI_motor_feedback_data_e motor_feedback;//注意设置反馈类型
 
 	supervisor_t *supervisor;
 

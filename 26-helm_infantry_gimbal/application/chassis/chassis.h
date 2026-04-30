@@ -21,12 +21,21 @@
 #endif
 
 
+/* 控制模式选择 */
+typedef enum{
+
+	CHASSIS_MODE_STOP = 0,//完全失能
+	CHASSIS_MODE_REMOTE = 1,
+	CHASSIS_MODE_KEYBOARD = 2,
+}chassis_mode_e;
+
+/* 是否跟随 */
 typedef enum
 {
 	CHASSIS_STOP = 0,
 	CHASSIS_FOLLOW_GIMBAL = 1,//底盘跟随模式
 	CHASSIS_MOVE = 2,
-} chassis_move_mode_e;
+}chassis_move_mode_e;
 
 typedef struct
 {
@@ -41,7 +50,8 @@ typedef struct
 
 	float vw_follow;//底盘跟随时加速度
 
-	chassis_move_mode_e chassis_mode;//用于传下底盘
+	chassis_move_mode_e move_mode;//用于传下底盘
+	chassis_mode_e chassis_mode;//control_mode
 
 }__attribute__((packed)) chassis_cmd_t;
 

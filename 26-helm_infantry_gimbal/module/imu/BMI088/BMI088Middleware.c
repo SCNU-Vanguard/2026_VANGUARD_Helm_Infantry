@@ -5,8 +5,6 @@
 
 #include "BMI088Middleware.h"
 
-SPI_HandleTypeDef *BMI088_SPI;
-
 void BMI088_ACCEL_NS_L( void )
 {
 	HAL_GPIO_WritePin( ACCEL_CS_GPIO_Port, ACCEL_CS_Pin, GPIO_PIN_RESET );

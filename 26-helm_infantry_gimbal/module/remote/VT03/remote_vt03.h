@@ -51,10 +51,12 @@ typedef union
 		uint16_t s    : 1;
 		uint16_t a    : 1;
 		uint16_t d    : 1;
+
 		uint16_t shift: 1;
 		uint16_t ctrl : 1;
 		uint16_t q    : 1;
 		uint16_t e    : 1;
+
 		uint16_t r    : 1;
 		uint16_t f    : 1;
 
@@ -62,6 +64,7 @@ typedef union
 		uint16_t z    : 1;
 		uint16_t x    : 1;
 		uint16_t c    : 1;
+		
 		uint16_t v    : 1;
 		uint16_t b    : 1;
 	};
@@ -101,6 +104,7 @@ typedef struct
 	uint8_t key_count[3][16];
 
 	uint16_t rc_rise_count[VT03_RC_RISE_COUNT_NUM]; // VT03新增遥控按键上升沿计数
+	uint16_t online;//1--在线
 
 } VT03_ctrl_t;
 

@@ -36,21 +36,10 @@ uint32_t chassis_high_water;
 #define __weak __attribute__((weak))
 #endif /* __weak */
 
-__weak void Chassis_Publish(void);
-
-__weak void Chassis_Init(void);
-
-__weak void Chassis_Handle_Exception(void);
 
 __weak void Chassis_Set_Mode(void);
 
-__weak void Chassis_Observer(void);
-
-__weak void Chassis_Reference(void);
-
 __weak void Chassis_Console(void);
-
-__weak void Chassis_Send_Cmd(void);
 
 osThreadId_t robot_cmd_task_handel;
 
@@ -96,10 +85,8 @@ static void Chassis_Task(void *argument)
 
 	for (; ;)
 	{
-
 		// 设置底盘模式
 		Chassis_Set_Mode( );
-
 		// 控制
 		Chassis_Console( );
 
@@ -113,31 +100,6 @@ static void Chassis_Task(void *argument)
 	}
 }
 
-/**
- * The above functions are declared as weak and provide notes to define their specific content in other
- * files.
- */
-__weak void Chassis_Publish(void)
-{
-	/*
-	 NOTE : 在其他文件中定义具体内容
-	*/
-}
-
-__weak void Chassis_Init(void)
-{
-	/*
-	 NOTE : 在其他文件中定义具体内容
-	*/
-}
-
-__weak void Chassis_Handle_Exception(void)
-{
-	/*
-	 NOTE : 在其他文件中定义具体内容
-	*/
-}
-
 __weak void Chassis_Set_Mode(void)
 {
 	/*
@@ -145,28 +107,7 @@ __weak void Chassis_Set_Mode(void)
 	*/
 }
 
-__weak void Chassis_Observer(void)
-{
-	/*
-	 NOTE : 在其他文件中定义具体内容
-	*/
-}
-
-__weak void Chassis_Reference(void)
-{
-	/*
-	 NOTE : 在其他文件中定义具体内容
-	*/
-}
-
 __weak void Chassis_Console(void)
-{
-	/*
-	 NOTE : 在其他文件中定义具体内容
-	*/
-}
-
-__weak void Chassis_Send_Cmd(void)
 {
 	/*
 	 NOTE : 在其他文件中定义具体内容

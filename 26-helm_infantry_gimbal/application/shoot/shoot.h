@@ -15,12 +15,21 @@
 #include <stdint.h>
 
 
+/* 控制模式选择 */
 typedef enum{
-	SHOOT_MODE_STOP = 0,
-	SHOOT_MODE_MANUAL = 1,
-	SHOOT_MODE_AUTO = 2,
 
+	SHOOT_MODE_STOP = 0,//完全失能
+	SHOOT_MODE_REMOTE = 1,
+	SHOOT_MODE_KEYBOARD = 2,
 }shoot_mode_e;
+
+/* 火控选择 */
+typedef enum
+{
+	SHOOT_STOP = 0,
+	SHOOT_MANUAL = 1,
+	SHOOT_AUTO = 2,
+}shoot_auto_e;
 
 typedef struct
 {
@@ -31,6 +40,7 @@ typedef struct
 {
 	/* mode */
 	shoot_mode_e mode;
+	shoot_auto_e auto_state;
 
 	/* data */
 	float shoot_frq;//Hz 
@@ -45,5 +55,6 @@ void Shoot_Init(void);
 void Shoot_Set_All_Friction(int16_t speed);
 
 extern shoot_cmd_t *shoot_cmd;
+extern uint8_t fire_enable_flag;//允许拨弹标志位
 
 #endif /* __SHOOT_H__ */

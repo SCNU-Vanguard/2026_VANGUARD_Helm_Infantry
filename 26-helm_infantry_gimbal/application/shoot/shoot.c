@@ -11,11 +11,12 @@
 
 #include <string.h>
 #include <stdlib.h>
+//#include "FreeRTOS.h"
+//#include "task.h"
+#include "cmsis_os2.h"
 
 #include "shoot.h" 
 #include "shoot_motor.h"
-
-#include "gimbal.h"
 
 #include "robot_frame_config.h"
 #include "robot_frame_init.h"
@@ -23,6 +24,12 @@
 shoot_motor_instance_t *friction_motor[3];
 static shoot_cmd_t shoot_cmd_storage;
 shoot_cmd_t *shoot_cmd = &shoot_cmd_storage;//静态初始化，防止空指针
+
+uint8_t fire_enable_flag = 0;//射击使能标志位
+uint8_t Shoot_Mode_Change_Flag = 0;//射击模式切换标志位
+uint8_t shoot_ready_flag = 0;//射击准备就绪标志位
+
+uint32_t shoot_start_timer = 0;//用于计算摩擦轮开转时间
 
 
 PID_t friction_angle_pid = {
@@ -88,7 +95,6 @@ void Shoot_Enable(void)
     {
         Shoot_Motor_Enable(friction_motor[i]);
     }
-
 }
 
 void Shoot_Disable(void)
@@ -131,8 +137,39 @@ void Shoot_Handle_Exception( )
 // 设置射击模式
 void Shoot_Set_Mode( )
 {
+    //模式切换
+    if( (rc_data->rc.gear_shift == STOP_MODE && key_flag == 0) || keyboard_enable_flag == 0 )
+    {
+        shoot_cmd -> mode = SHOOT_MODE_STOP;
+    }
+
+    else if(rc_data->rc.gear_shift == REMOTE_MODE && key_flag == 0)
+    {
+        shoot_cmd -> mode = SHOOT_MODE_REMOTE;
+    }
+
+    else if(rc_data->rc.gear_shift == KEYBOARD_MODE || ROBOT_FRAME_KEYBOARD_ENABLED() )
+    {
+        shoot_cmd -> mode = SHOOT_MODE_KEYBOARD;//键鼠模式,默认使能
+    }
+
     //扳机键，开启摩擦轮
-    shoot_cmd -> mode = rc_data->rc_rise_count[VT03_RC_RISE_TRIGGE_KEY] % 3;//模式切换
+    if( shoot_cmd -> mode == SHOOT_MODE_REMOTE )
+    {
+        shoot_cmd -> auto_state = rc_data->rc_rise_count[VT03_RC_RISE_TRIGGE_KEY] % 3;//模式切换,决定手打还是自瞄
+    }
+    else if( shoot_cmd -> mode == SHOOT_MODE_KEYBOARD )
+    {
+        //键鼠模式下，按住鼠标左键开火
+        if( rc_data->mouse.press_l == 1 )
+        {
+            shoot_cmd -> auto_state = SHOOT_MANUAL;
+        }
+        else
+        {
+            shoot_cmd -> auto_state = SHOOT_STOP;
+        }
+    }
 
 }
 // 设置目标量
@@ -147,49 +184,108 @@ void Shoot_Console( )
     switch(shoot_cmd->mode)
     {
         case SHOOT_MODE_STOP:
-						shoot_cmd -> shoot_v = 0;
-						shoot_cmd -> shoot_frq = 0;
+                shoot_cmd -> shoot_v = 0;
+                shoot_cmd -> shoot_frq = 0;
             Shoot_Disable();
         break;
 
-        case SHOOT_MODE_MANUAL:
+        case SHOOT_MODE_REMOTE:
         {
-            Shoot_Enable();
-
-            shoot_cmd -> shoot_v = SHOOT_V;
-            Shoot_Set_All_Friction(shoot_cmd -> shoot_v);
-
-            if(friction_motor[0] -> receive_flag == 0xA5 || friction_motor[1] -> receive_flag == 0xA5 || friction_motor[2] -> receive_flag == 0xA5)//摩擦轮开转后再给拨弹盘设置转速
+            if(fire_enable_flag == 1 && shoot_cmd->auto_state != SHOOT_STOP)/////
             {
-                // if(Shoot_Mode_Change_Flag == 1)
-                // {
-                // 	Shoot_Mode_Change_Flag = 0;
-                // 	shoot_start_timer = osKernelGetTickCount();  // 记录当前时间
-                // 	shoot_ready_flag = 0;
-                // }
-                // if(osKernelGetTickCount() - shoot_start_timer >= 5000)// 判断是否已经等待满 3s
-                // {
-                // 	shoot_ready_flag = 1;//3秒到，可以发射
-                // }
+                Shoot_Enable();
+                shoot_cmd -> shoot_v = SHOOT_V;
+                Shoot_Set_All_Friction(shoot_cmd -> shoot_v);//设置目标值
 
-                shoot_cmd -> shoot_frq = rc_data->rc.dial * REMOTE_SHOT_SENSITIVITY;//Hz
+
+                if(friction_motor[0] -> receive_flag == 0xA5 || friction_motor[1] -> receive_flag == 0xA5 || friction_motor[2] -> receive_flag == 0xA5)//摩擦轮开转后再给拨弹盘设置转速
+                {
+                    if(Shoot_Mode_Change_Flag == 1)
+                    {
+                    	Shoot_Mode_Change_Flag = 0;
+                    	shoot_start_timer = osKernelGetTickCount();  // 记录当前时间
+                    	shoot_ready_flag = 0;
+                    }
+                    if(osKernelGetTickCount() - shoot_start_timer >= 5000)// 判断是否已经等待满 3s
+                    {
+                    	shoot_ready_flag = 1;//3秒到，可以发射
+                    }
+
+                    if( shoot_ready_flag == 1 )
+                    {
+                        shoot_cmd -> shoot_frq = rc_data->rc.dial * REMOTE_SHOOT_SENSITIVITY;//Hz
+                    }
+
+                    // else if( gimbal_cmd -> gimbal_mode == GIMBAL_MODE_KEYBOARD && rc_data->mouse.press_l == 1 )//键鼠模式下，按住鼠标左键开火
+                    // {
+                    //     shoot_cmd -> shoot_frq = 10.0f;//Hz,键鼠模式暂定为10Hz
+                    // }
+                }
+
             }
-
+            else
+            {
+                Shoot_Mode_Change_Flag = 1;
+                shoot_cmd -> shoot_v = 0;
+                shoot_cmd -> shoot_frq = 0;
+                Shoot_Disable();
+            }
+            break;
         }
-        break;
 
-        case SHOOT_MODE_AUTO:
+        case SHOOT_MODE_KEYBOARD:
         {
-            Shoot_Enable();
-            shoot_cmd -> shoot_v = SHOOT_V;
-            shoot_cmd -> shoot_frq = 10.0f;//Hz
+            if(fire_enable_flag == 1 )/////
+            {
+                Shoot_Enable();
+							
+							  //if( rc_data->key[0].g == 1 )
+									
+                shoot_cmd -> shoot_v = SHOOT_V;
+                Shoot_Set_All_Friction(shoot_cmd -> shoot_v);//设置目标值
+
+
+                if(friction_motor[0] -> receive_flag == 0xA5 || friction_motor[1] -> receive_flag == 0xA5 || friction_motor[2] -> receive_flag == 0xA5)//摩擦轮开转后再给拨弹盘设置转速
+                {
+                    if(Shoot_Mode_Change_Flag == 1)
+                    {
+                    	Shoot_Mode_Change_Flag = 0;
+                    	shoot_start_timer = osKernelGetTickCount();  // 记录当前时间
+                    	shoot_ready_flag = 0;
+                    }
+                    if(osKernelGetTickCount() - shoot_start_timer >= 5000)// 判断是否已经等待满 3s
+                    {
+                    	shoot_ready_flag = 1;//3秒到，可以发射
+                    }
+
+                    if( shoot_cmd -> auto_state == SHOOT_MANUAL && shoot_ready_flag == 1)//键鼠模式下，按住鼠标左键开火
+                    {
+                        shoot_cmd -> shoot_frq = 10.0f;//Hz,键鼠模式暂定为10Hz
+                    }
+                    else if( shoot_cmd -> auto_state == SHOOT_AUTO && shoot_ready_flag == 1)//自瞄模式
+                    {
+                        shoot_cmd -> shoot_frq = 10.0f;//Hz,自瞄模式暂定为10Hz
+                    }
+                    else
+                    {
+                        shoot_cmd -> shoot_frq = 0.0f;
+                    }
+                }
+
+            }
+            else
+            {
+                Shoot_Mode_Change_Flag = 1;
+                shoot_cmd -> shoot_v = 0;
+                shoot_cmd -> shoot_frq = 0;
+                Shoot_Disable();
+            }
 
             break;
         }   
 
         default:
         {
-
             shoot_cmd -> shoot_v = 0;
             shoot_cmd -> shoot_frq = 0;
             Shoot_Disable();
@@ -206,3 +302,4 @@ void Shoot_Send_Cmd( )
 {
     Shoot_Motor_Send();
 }
+

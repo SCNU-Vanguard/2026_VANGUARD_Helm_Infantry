@@ -43,7 +43,7 @@ void Serial_485_Send_Control(void)
     uart2_tx_message.chassis_vx = chassis_cmd -> vx ;
     uart2_tx_message.chassis_vy = chassis_cmd -> vy ;
     uart2_tx_message.chassis_vw = chassis_cmd -> vw ;
-    uart2_tx_message.chassis_mode = chassis_cmd -> chassis_mode ;
+    uart2_tx_message.chassis_mode = chassis_cmd -> move_mode ;
 
     // /*云台参数*/
     uart2_tx_message.target_angle_yaw = gimbal_cmd -> target_angle_yaw ;
