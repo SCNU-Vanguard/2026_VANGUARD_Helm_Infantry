@@ -110,6 +110,8 @@ static void Frame_Task_Init(void)
 
 	Buzzer_Task_Init( );
 
+	Daemon_Task_Init( );
+
 	Chassis_Task_Init( );
 
 	Gimbal_Task_Init( );

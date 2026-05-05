@@ -128,7 +128,6 @@ static void Vt03_Control_Rx_Callback(void)
     if(vt03_usart_instance->recv_buff[0] != 0xA9 || vt03_usart_instance->recv_buff[1] != 0x53 
 	 	|| Verify_CRC16_Check_Sum(vt03_usart_instance->recv_buff, REMOTE_VT03_FRAME_SIZE) == 0)
 	{
-		vt03_ctrl[VT03_TEMP].online = 0;
 		return;
 	}
 	Vt03_Control_Resolve(vt03_usart_instance->recv_buff); // 进行协议解析
@@ -159,9 +158,9 @@ VT03_ctrl_t *Vt03_Control_Init(UART_HandleTypeDef *vt03_usart_handle)
 
 	// 进行守护进程的注册,用于定时检查遥控器是否正常工作
 	supervisor_init_config_t supervisor_conf = {
-		.reload_count = 1000, // 1s未收到数据视为离线,遥控器的接收频率实际上是1000/14Hz(大约70Hz)
+		.reload_count = 200, // 200ms未收到数据视为离线,遥控器的接收频率实际上是1000/14Hz(大约70Hz)
 		.handler_callback = Vt03_RC_Lost_Callback,
-		.owner_id = &vt03_ctrl, 
+		.owner_id = vt03_ctrl, 
 	};
 	vt03_supervisor_instance = Supervisor_Register(&supervisor_conf);
 

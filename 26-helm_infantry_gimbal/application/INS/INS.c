@@ -108,7 +108,7 @@ void INS_Init(void)
 	float init_quaternion[4] = {1, 0, 0, 0};
 	EKF_Quaternion_Init(init_quaternion);
 	// IMU_QuaternionEKF_Init(init_quaternion, 12, 0.005f, 1000000 * 15, 0.9998f, 0.005f);
-	IMU_QuaternionEKF_Init(init_quaternion, 10.5f, 0.00015f, 10000000, 0.9998f, 0.0005f);
+	IMU_QuaternionEKF_Init(init_quaternion, 10.5f, 0.00015f, 500000000.0f, 0.9998f, 0.0005f);
 	// IMU_QuaternionEKF_Init(init_quaternion, 10.0f, 0.001f, 500000.0f, 0.9996f, 0.01f);
 	// IMU_QuaternionEKF_Init(init_quaternion, 20.0f, 0.0001f, 30000.0f, 0.999f, 0.01f);
 

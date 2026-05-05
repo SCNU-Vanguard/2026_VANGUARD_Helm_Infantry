@@ -24,8 +24,8 @@
 #define POS_MODE	0x100
 #define SPEED_MODE	0x200
 
-#define DM_P_MIN  (-12.56637f)
-#define DM_P_MAX  12.56637f
+#define DM_P_MIN  (-3.14159f)
+#define DM_P_MAX  3.14159f
 #define DM_V_MIN  (-45.0f)
 #define DM_V_MAX  45.0f
 #define DM_T_MIN  (-40.0f)

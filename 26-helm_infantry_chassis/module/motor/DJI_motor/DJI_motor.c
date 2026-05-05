@@ -204,12 +204,12 @@ static void DJI_Motor_Lost_Callback(void *motor_ptr)
 DJI_motor_instance_t *DJI_Motor_Init(motor_init_config_t *config)
 {
 	DJI_motor_instance_t *instance = (DJI_motor_instance_t *) malloc(sizeof(DJI_motor_instance_t));
-	memset(instance, 0, sizeof(DJI_motor_instance_t));
 
 	if (instance == NULL)
 	{
 		return NULL;
 	}
+	memset(instance, 0, sizeof(DJI_motor_instance_t));
 
 	// motor basic setting 电机基本设置
 	instance->motor_type     = config->motor_type;                     // 6020 or 2006 or 3508
@@ -238,6 +238,11 @@ DJI_motor_instance_t *DJI_Motor_Init(motor_init_config_t *config)
 	config->can_init_config.can_module_callback = Decode_DJI_Motor; // set callback
 	config->can_init_config.id                  = instance;       // set id,eq to address(it is IdTypentity)
 	instance->motor_can_instance                = CAN_Register(&config->can_init_config);
+	if (instance->motor_can_instance == NULL)
+	{
+		free(instance);
+		return NULL;
+	}
 
 	// 注册守护线程
 	supervisor_init_config_t supervisor_config = {
@@ -492,15 +497,21 @@ void DJI_Motor_Control(DJI_motor_instance_t *motor_s)
 				{
 					if (motor->motor_feedback == ORIGIN)
 					{
-						pid_fab = receive_data->total_ecd;
+						pid_fab = DJI_Motor_GetVal(motor,
+						                           MOTOR_ANGLE,
+						                           motor->motor_feedback);
 					}
 					else if (motor->motor_feedback == RAD)
 					{
-						pid_fab = receive_data->total_rad;
+						pid_fab = DJI_Motor_GetVal(motor,
+						                           MOTOR_ANGLE,
+						                           motor->motor_feedback);
 					}
 					else if (motor->motor_feedback == DEGREE)
 					{
-						pid_fab = receive_data->total_angle; // MOTOR_FEED,对total angle闭环,防止在边界处出现突跃
+						pid_fab = DJI_Motor_GetVal(motor,
+						                           MOTOR_ANGLE,
+						                           motor->motor_feedback);
 					}
 				}
 				// 更新pid_ref进入下一个环

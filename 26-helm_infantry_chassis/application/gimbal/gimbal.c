@@ -16,8 +16,10 @@
 
 #include "DM_motor.h"
 
-gimbal_cmd_t *gimbal_cmd;//云台相关控制指令
-DM_motor_instance_t *gimbal_dm6006;//云台电机
+static gimbal_cmd_t gimbal_cmd_storage;
+gimbal_cmd_t *gimbal_cmd = &gimbal_cmd_storage;//静态初始化，防止空指针(任务堆栈)
+
+DM_motor_instance_t *gimbal_dm6006;//云台电机Gimbal_DM6006_Init
 
 //避免对 packed 成员取址导致未对齐指针告警
 static float gimbal_current_angle_feedback = 0.0f;
@@ -25,20 +27,20 @@ static float gimbal_current_yaw_acc_feedback = 0.0f;
 
 /*云台电机*/
 PID_t gimbal_dm6006_angle_pid = {
-    .kp = 0,
+    .kp = 7.1,
     .ki = 0,
     .kd = 0,	
-    .output_limit = 5.0f, 
+    .output_limit = 50.0f,//5.0f, 
     .integral_limit = 5.0f,
     .dead_band = 0.0f,
 };
 
 PID_t gimbal_dm6006_speed_pid = {
-    .kp = 0,
-    .ki = 0,
+    .kp = 7,
+    .ki = 0.08,
     .kd = 0,	
     .output_limit = 5.0f, 
-    .integral_limit = 5.0f,
+    .integral_limit = 50.0f,
     .dead_band = 0.0f,
 };
 
@@ -64,7 +66,7 @@ motor_init_config_t gimbal_dm6006_init = {
 
     .controller_setting_init_config = {
         .outer_loop_type = ANGLE_LOOP,
-        .close_loop_type = SPEED_LOOP,
+        .close_loop_type = ANGLE_AND_SPEED_LOOP ,
 
         .control_button = POLYCYCLIC_LOOP_CONTROL,//电流闭环控制
         .motor_reverse_flag = MOTOR_DIRECTION_NORMAL,
@@ -98,7 +100,9 @@ void Gimbal_DM6006_Init(void)
 	
     gimbal_dm6006 = DM_Motor_Init(&gimbal_dm6006_init);
 
+
     DM_Motor_Enable(gimbal_dm6006);//发送使能信号
+
     DM_Motor_Start(gimbal_dm6006);//允许发送
 }
 
@@ -106,27 +110,62 @@ void Gimbal_DM6006_Init(void)
 //完全失能模式,云台没力
 void Gimbal_Disable(void)
 {
-   DM_Motor_Disable(gimbal_dm6006);
-   DM_Motor_Stop(gimbal_dm6006);
+    if( gimbal_dm6006->receive_data.state == 1 )
+    {
+        DM_Motor_Disable(gimbal_dm6006);
+    }
+    DM_Motor_Stop(gimbal_dm6006);
+    gimbal_dm6006->motor_controller.speed_PID->output = 0;
+    gimbal_dm6006->motor_controller.angle_PID->output = 0;
 }
 
 
 void Gimbal_Enable(void)
 {
-    DM_Motor_Enable(gimbal_dm6006);
+    if( gimbal_dm6006->receive_data.state == 0 )
+    {
+        DM_Motor_Enable(gimbal_dm6006);
+    }
     DM_Motor_Start(gimbal_dm6006);
 }
 
+float pid_yaw_p = 0;
+float pid_yaw_i = 0;
+float pid_yaw_d = 0;
+//外环
+float pid_yaw_p_out = 1;
+float pid_yaw_i_out = 0;
+float pid_yaw_d_out = 0;
+
+float yaw_tar =0;
+float yaw_current = 0;
+
+float torque = 0;
+
+//逆正顺负
 void Gimbal_DM6006_Ctrl(void)
 {
+
+//    gimbal_dm6006->motor_controller.speed_PID->kp = pid_yaw_p ;
+//    gimbal_dm6006->motor_controller.speed_PID->ki = pid_yaw_i;
+//    gimbal_dm6006->motor_controller.speed_PID->kd = pid_yaw_d;
+
+//    gimbal_dm6006->motor_controller.angle_PID->kp = pid_yaw_p_out;
+//    gimbal_dm6006->motor_controller.angle_PID->ki = pid_yaw_i_out;
+//    gimbal_dm6006->motor_controller.angle_PID->kd = pid_yaw_d_out;
     /* 野指针保护 */
-    if( gimbal_dm6006 == NULL || gimbal_cmd == NULL || gimbal_cmd->target_angle_yaw == NULL )
+    if( gimbal_dm6006 == NULL || gimbal_cmd == NULL )
     {
         return;
     }
-
+    
+		torque = gimbal_dm6006->receive_data.torque;
+    yaw_current = gimbal_cmd->current_angle_yaw;
+		float tar_yaw = gimbal_cmd -> target_angle_yaw;
+		
     gimbal_current_angle_feedback = gimbal_cmd->current_angle_yaw;
     gimbal_current_yaw_acc_feedback = gimbal_cmd->current_yaw_acc;
+    
 
     if( fabsf(gimbal_cmd->target_angle_yaw) > 2 * PI || fabsf(gimbal_current_angle_feedback) > 2 * PI )
     {
@@ -143,7 +182,7 @@ void Gimbal_DM6006_Ctrl(void)
 
         case GIMBAL_MODE_REMOTE:
             Gimbal_Enable( );
-            //DM_Motor_SetTar(gimbal_dm6006, gimbal_cmd->target_angle);
+            DM_Motor_SetTar(gimbal_dm6006, tar_yaw);
             break;
 
         case GIMBAL_MODE_KEYBOARD:
@@ -155,6 +194,7 @@ void Gimbal_DM6006_Ctrl(void)
             Gimbal_Disable( );
             break;
     }
+		yaw_tar = tar_yaw;
 
     DM_Motor_Control(gimbal_dm6006);
 }

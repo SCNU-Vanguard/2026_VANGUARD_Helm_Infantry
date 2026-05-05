@@ -54,6 +54,7 @@ void Shoot_Disable(void);
 void Shoot_Init(void);
 void Shoot_Set_All_Friction(int16_t speed);
 
+extern uint8_t manual_shoot_flag ;
 extern shoot_cmd_t *shoot_cmd;
 extern uint8_t fire_enable_flag;//允许拨弹标志位
 

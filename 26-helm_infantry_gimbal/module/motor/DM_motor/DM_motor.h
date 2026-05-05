@@ -24,12 +24,13 @@
 #define POS_MODE	0x100
 #define SPEED_MODE	0x200
 
-#define DM_P_MIN  (-12.56637f)
-#define DM_P_MAX  12.56637f
-#define DM_V_MIN  (-45.0f)
-#define DM_V_MAX  45.0f
-#define DM_T_MIN  (-40.0f)
-#define DM_T_MAX   40.0f
+//以下参数需要根据具体电机进行修改
+#define DM_P_MIN  (-3.141593f)
+#define DM_P_MAX  3.141593f
+#define DM_V_MIN  (-10.0f)
+#define DM_V_MAX  10.0f
+#define DM_T_MIN  (-28.0f)
+#define DM_T_MAX   28.0f
 #define DM_KP_MIN 0.0f
 #define DM_KP_MAX 500.0f
 #define DM_KD_MIN 0.0f

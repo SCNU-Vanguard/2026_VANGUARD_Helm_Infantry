@@ -23,6 +23,11 @@
 
 ////////////////////////////////// 自定义参数 /////////////////////////////////
 
+///neck最低 ： 1.2rad/s
+//水平点 ： 0.0rad
+
+//
+
 #define RC_NOW 0
 #define RC_LAST 1
 
@@ -32,21 +37,25 @@
 #define KEYBOARD_MODE 2
 
 /*底盘相关参数*/
-#define CHASSIS_GM6020_ZERO_1  0.0f //rad  定义软件零点,底盘轮子正向前
-#define CHASSIS_GM6020_ZERO_2  0.0f //
+#define CHASSIS_GM6020_ZERO_1  (3060.0f / 8192.0f * 2 * PI) //rad  定义软件零点,底盘轮子正向前  980/8192
+#define CHASSIS_GM6020_ZERO_2  (7157.0f / 8192.0f * 2 * PI) //          5000/8192 * 2 PI
 
-#define CHASSIS_FORWARD_ZERO   0.0f //底盘正向向前时云台电机零点 rad
+#define CHASSIS_FORWARD_ZERO            2.84408951f //底盘正向向前时云台电机零点 rad
+#define CHASSIS_FOLLOW_FORWARD_ZERO    0.45401692f
+#define CHASSIS_GIMBAL_LAY_ZERO         2.09942722f
 
-#define CHASSIS_RADIUS         0.0f //底盘半径 m
-#define OMNI_WHEEL_RADIUS      0.0f //全向轮半径 m
-#define HELM_WHEEL_RADIUS      0.0f //舵轮半径 m
 
-#define OMNI_REDUCTION_RATIO   0.0f //全向轮减速比
-#define HELM_REDUCTION_RATIO    19.20321f //舵轮减速比 3591.0f/187.0f
+#define CHASSIS_RADIUS         0.280f //底盘半径 m           280mm
+#define OMNI_WHEEL_RADIUS      0.065f //全向轮半径 m         65mm
+#define HELM_WHEEL_RADIUS      0.058f //舵轮半径 m           58mm
+
+#define OMNI_REDUCTION_RATIO    19.20321f //    全向轮减速比    3591.0f/187.0f
+#define HELM_REDUCTION_RATIO    15.7647f //   舵轮减速比 268 : 17
 
 /*云台相关参数*/
-#define GIMBAL_NECK_ZERO 0.0f
-#define GIMBAL_HEAD_ZERO 0.0f 
+
+#define GIMBAL_NECK_LAY 1.1f//非极限点
+#define GIMBAL_NECK_STAND 0.1f
 
 
 /*射击相关参数*/
@@ -62,22 +71,22 @@
 
 
 /* 灵敏度 */
-#define REMOTE_CHASSIS_SENSITIVITY_VX 0.001f //底盘线速度灵敏度
-#define REMOTE_CHASSIS_SENSITIVITY_VY 0.001f
-#define REMOTE_CHASSIS_SENSITIVITY_VW 0.001f 
+#define REMOTE_CHASSIS_SENSITIVITY_VX 0.0013f //底盘线速度灵敏度
+#define REMOTE_CHASSIS_SENSITIVITY_VY 0.0013f
+#define REMOTE_CHASSIS_SENSITIVITY_VW 0.006f 
 
-#define REMOTE_YAW_SENSITIVITY         0.001f //云台yaw轴灵敏度
-#define REMOTE_PITCH_SENSITIVITY       0.001f //云台pitch轴灵敏度
+#define REMOTE_YAW_SENSITIVITY         0.00001f //云台yaw轴灵敏度
+#define REMOTE_PITCH_SENSITIVITY       0.00001f //云台pitch轴灵敏度
 
-#define REMOTE_SHOOT_SENSITIVITY       0.02f //射击频率灵敏度
+#define REMOTE_SHOOT_SENSITIVITY       0.00833f //射击频率灵敏度 ( 5/600 )
 #define KEYBOARD_SHOOT_SENSITIVITY     10.0f 
 
 #define KEYBOARD_CHASSIS_SENSITIVITY_VX 3.0f //底盘线速度灵敏度
 #define KEYBOARD_CHASSIS_SENSITIVITY_VY 3.0f
 #define KEYBOARD_CHASSIS_SENSITIVITY_VW 1.5f
 
-#define KEYBOARD_YAW_SENSITIVITY         0.001f //云台yaw轴灵敏度
-#define KEYBOARD_PITCH_SENSITIVITY       0.001f //云台pitch轴灵敏度
+#define KEYBOARD_YAW_SENSITIVITY         0.0003f //云台yaw轴灵敏度
+#define KEYBOARD_PITCH_SENSITIVITY       0.0003f //云台pitch轴灵敏度
 
 
 ////////////////////////////////// 自定义参数 /////////////////////////////////

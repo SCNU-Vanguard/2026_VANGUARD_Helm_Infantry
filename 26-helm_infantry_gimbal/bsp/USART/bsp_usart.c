@@ -207,6 +207,9 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 	}
 }
 
+//测试
+uint32_t rs485_error_count = 0;
+
 /**
  * @brief 当串口发送/接收出现错误时,会调用此函数,此时这个函数要做的就是重新启动接收
  *
@@ -245,6 +248,12 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 			                             usart_instances[i]->recv_buff_size);
 			__HAL_DMA_DISABLE_IT(usart_instances[i]->usart_handle->hdmarx, DMA_IT_HT);
 			return;
+		}
+		
+		if( huart == &huart2 )
+		{
+			//HAL_UART_Receive_IT(&huart2, &uart2_current_byte, 1);
+			rs485_error_count ++ ;
 		}
 	}
 }

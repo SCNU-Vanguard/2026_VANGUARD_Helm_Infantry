@@ -486,23 +486,19 @@ void DM_Motor_Control(DM_motor_instance_t *motor_s)
 			// 直接控制扭矩
 			if (motor->contorl_mode_state == SINGLE_TORQUE)
 			{
-				motor->transmit_data.position_des = 0.0f;
-				motor->transmit_data.velocity_des = 0.0f;
-				// motor->transmit_data.torque_des = motor_controller->pid_ref;
+				motor->transmit_data.torque_des = motor_controller->pid_ref;
 			}
-			else if (motor->contorl_mode_state == TARCE_STATE)//暂时未实现轨迹模式，换成速度控制，kp = 0 kd !=0
+			else if (motor->contorl_mode_state == TARCE_STATE)
 			{
 				motor->transmit_data.torque_des   = 0.0f;
-				motor->transmit_data.position_des = 0.0f;
-				// motor->transmit_data.velocity_des = 0.0f; //p_des随时间变化的连续可导函数时，同时v_des是p_des的导数，可实现位置跟踪和速度跟踪
-
-				// motor->transmit_data.position_des = motor_controller->pid_ref;
+				motor->transmit_data.velocity_des = 0.0f; //p_des随时间变化的连续可导函数时，同时v_des是p_des的导数，可实现位置跟踪和速度跟踪
+				motor->transmit_data.position_des = motor_controller->pid_ref;
 			}
 			else if (motor->contorl_mode_state == ABSOLUTE_STATE)
 			{
 				motor->transmit_data.torque_des   = 0.0f;
 				motor->transmit_data.velocity_des = 0.0f;
-				// motor->transmit_data.position_des = motor_controller->pid_ref;
+				motor->transmit_data.position_des = motor_controller->pid_ref;
 			}
 		}
 		else
@@ -510,7 +506,7 @@ void DM_Motor_Control(DM_motor_instance_t *motor_s)
 			// pid_ref会顺次通过被启用的闭环充当数据的载体
 			// 计算位置环,只有启用位置环且外层闭环为位置时会计算速度环输出
 			// dm_diff的值需要自己另外做处理，比如使其指向视觉发送的目标装甲板的偏差值
-			if ((motor_setting->close_loop_type & ANGLE_LOOP) && (motor_setting->outer_loop_type == ANGLE_LOOP))
+			if ((motor_setting->close_loop_type & ANGLE_LOOP) && motor_setting->outer_loop_type == ANGLE_LOOP)
 			{
 				if (motor_setting->angle_feedback_source == OTHER_FEED)
 				{
@@ -520,11 +516,11 @@ void DM_Motor_Control(DM_motor_instance_t *motor_s)
 				{
 					if (motor->motor_feedback == DM_MOTOR_ABSOLUTE)
 					{
-						pid_fab = receive_data->position;
+						pid_fab = motor->receive_data.position;
 					}
 					else if (motor->motor_feedback == DM_MOTOR_DIFF)
 					{
-						pid_fab = receive_data->dm_diff;
+						pid_fab = motor->receive_data.dm_diff;
 					}
 				}
 				// 更新pid_ref进入下一个环
@@ -549,11 +545,7 @@ void DM_Motor_Control(DM_motor_instance_t *motor_s)
 				{
 					if (motor->motor_feedback == DM_MOTOR_ABSOLUTE)
 					{
-						pid_fab = receive_data->velocity;
-					}
-					else if (motor->motor_feedback == DM_MOTOR_DIFF)
-					{
-						pid_fab = receive_data->dm_diff;
+						pid_fab = motor->receive_data.velocity;
 					}
 				}
 
@@ -602,6 +594,39 @@ void DM_Motor_Control(DM_motor_instance_t *motor_s)
 			//速度模式最终只控制速度，所以应该在此都是只传一个速度控制量即可
 			//但是需要注意的是如果需要角度闭环时同时给出前馈，则只能分开判断，因为速度模式发出去的速度我们虚假认为电机能直接稳定响应，
 			//而若是我们设置速度闭环同时又采取与角度闭环时一样的操作则会导致最终控制的速度并不是我们想控制的速度
+			// if (motor->motor_settings.outer_loop_type == ANGLE_LOOP)
+			// {
+			// 	motor->transmit_data.velocity_des = pid_ref ;//+ motor->dm_offset_control;缺陷设计，前馈控制应该搭建控制环路分析得到具体的前馈控制器，但是可以临时应对突发情况得到一个不好不差的控制
+
+			// 	//pid 应做好限幅
+			// 	// if (motor->transmit_data.velocity_des >= motor->motor_controller.angle_PID->output_limit)
+			// 	// {
+			// 	// 	motor->transmit_data.velocity_des = motor->motor_controller.angle_PID->output_limit;
+			// 	// }
+			// 	// else if (motor->transmit_data.velocity_des <= -motor->motor_controller.angle_PID->output_limit)
+			// 	// {
+			// 	// 	motor->transmit_data.velocity_des = -motor->motor_controller.angle_PID->output_limit;
+			// 	// }
+			// }
+			// else if (motor->motor_settings.outer_loop_type == SPEED_LOOP)
+			// {
+			// 	motor->transmit_data.velocity_des = pid_ref;
+
+			// 	//pid 应做好限幅
+			// 	// if (motor->transmit_data.velocity_des >= motor->motor_controller.speed_PID->output_limit)
+			// 	// {
+			// 	// 	motor->transmit_data.velocity_des = motor->motor_controller.speed_PID->output_limit;
+			// 	// }
+			// 	// else if (motor->transmit_data.velocity_des <= -motor->motor_controller.speed_PID->output_limit)
+			// 	// {
+			// 	// 	motor->transmit_data.velocity_des = -motor->motor_controller.speed_PID->output_limit;
+			// 	// }
+			// }
+			// else if (motor->motor_settings.outer_loop_type == TORQUE_LOOP)
+			// {
+			// 	//速度模式控不了力矩，所以应该删去这个内容
+			// 	motor->transmit_data.velocity_des = pid_ref;
+			// }
 
 			DM_Speed_Ctrl(motor, motor->transmit_data.velocity_des);
 		}
@@ -617,12 +642,49 @@ void DM_Motor_Control(DM_motor_instance_t *motor_s)
 			}
 			else
 			{
-				motor->transmit_data.velocity_des = pid_ref;
+				motor->transmit_data.position_des = pid_ref;
 			}
 
 			//位置模式最终控制位置，但可以设置最高速度加以限制，
 			//这里因为位置给定就是目标值，我们虚假认为电机能直接稳定响应，所以不用pid计算位置，
 			//所以只需直接发送位置，并用pid计算最高速度加以限制
+			// if (motor->motor_settings.close_loop_type == ANGLE_LOOP)
+			// {
+			// 	motor->transmit_data.velocity_des = pid_ref;
+
+			// 	//pid 应做好限幅
+			// 	// if (motor->transmit_data.velocity_des >= max)
+			// 	// {
+			// 	// 	motor->transmit_data.velocity_des = max;
+			// 	// }
+			// 	// else if (motor->transmit_data.velocity_des <= min)
+			// 	// {
+			// 	// 	motor->transmit_data.velocity_des = min;
+			// 	// }
+
+			// 	DM_Pos_Speed_Ctrl(motor,
+			// 	                  motor->transmit_data.position_des,
+			// 	                  motor->transmit_data.velocity_des);
+			// }
+
+			// if (motor->motor_settings.close_loop_type == SPEED_LOOP)
+			// {
+			// 	motor->transmit_data.velocity_des = pid_ref;
+
+			// 	//pid 应做好限幅
+			// 	// if (motor->transmit_data.velocity_des >= max)
+			// 	// {
+			// 	// 	motor->transmit_data.velocity_des = max;
+			// 	// }
+			// 	// else if (motor->transmit_data.velocity_des <= min)
+			// 	// {
+			// 	// 	motor->transmit_data.velocity_des = min;
+			// 	// }
+
+			// 	DM_Pos_Speed_Ctrl(motor,
+			// 	                  motor->transmit_data.position_des,
+			// 	                  motor->transmit_data.velocity_des);
+			// }
 
 			DM_Pos_Speed_Ctrl(motor,
 			                  motor->transmit_data.position_des,
@@ -651,38 +713,44 @@ void DM_Motor_Control(DM_motor_instance_t *motor_s)
 			{
 				if (motor->motor_settings.outer_loop_type == ANGLE_LOOP)
 				{
+					motor->transmit_data.torque_des = pid_ref;
+					motor->transmit_data.position_des = 0.0f;
+					motor->transmit_data.velocity_des = 0.0f;
+					motor->transmit_data.Kp           = 0;
+					motor->transmit_data.Kd           = 0;
 				}
 				if (motor->motor_settings.outer_loop_type == SPEED_LOOP)
 				{
+					motor->transmit_data.torque_des = pid_ref;
+					motor->transmit_data.position_des = 0.0f;
+					motor->transmit_data.velocity_des = 0.0f;
+					motor->transmit_data.Kp           = 0;
+					motor->transmit_data.Kd           = 0;
 					// 当kp=0，kd≠0时，给定v_des即可实现匀速转动。匀速转动过程中存在
 					// 静差，另外kd不宜过大， kd过大时会引起震荡。
 				}
 				if (motor->motor_settings.outer_loop_type == TORQUE_LOOP)
-				{
+				{	
 					if (motor->contorl_mode_state == SINGLE_TORQUE)
 					{
-						motor->transmit_data.Kp = 0;
-						motor->transmit_data.Kd = 0;
-
 						motor->transmit_data.torque_des = pid_ref;
+						motor->transmit_data.position_des = 0.0f;
+						motor->transmit_data.velocity_des = 0.0f;
+						motor->transmit_data.Kp           = 0;
+						motor->transmit_data.Kd           = 0;
 					}
 					else if (motor->contorl_mode_state == TARCE_STATE)
 					{
-						// motor->transmit_data.Kp = 1.0f;
-						// motor->transmit_data.Kd = 1.0f;
-
-						// motor->transmit_data.position_des = pid_ref;
-						motor->transmit_data.Kp = 0.0f;
-						motor->transmit_data.Kd = 10.0f;
-
-						motor->transmit_data.velocity_des = pid_ref;
+						motor->transmit_data.position_des = motor_controller->pid_ref;
+						motor->transmit_data.Kp = 1.0f;
+						motor->transmit_data.Kd = 1.0f;
 					}
 					else if (motor->contorl_mode_state == ABSOLUTE_STATE)
 					{
-						motor->transmit_data.Kp = 5.0f;
-						motor->transmit_data.Kd = 1.0f;
-
-						motor->transmit_data.position_des = pid_ref;
+						motor->transmit_data.position_des = motor_controller->pid_ref;
+						motor->transmit_data.velocity_des = 0.0f;
+						motor->transmit_data.Kp           = 5.0f;
+						motor->transmit_data.Kd           = 1.0f;
 					}
 
 					//pid 应做好限幅
@@ -698,11 +766,11 @@ void DM_Motor_Control(DM_motor_instance_t *motor_s)
 			}
 
 			DM_MIT_Ctrl(motor,
-			            motor->transmit_data.position_des,
-			            motor->transmit_data.velocity_des,
-			            motor->transmit_data.Kp,
-			            motor->transmit_data.Kd,
-			            motor->transmit_data.torque_des);
+					    motor->transmit_data.position_des,
+					    motor->transmit_data.velocity_des,
+					    motor->transmit_data.Kp,
+					    motor->transmit_data.Kd,
+					    motor->transmit_data.torque_des);
 		}
 	}
 }

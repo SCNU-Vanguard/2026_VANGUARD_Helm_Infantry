@@ -20,6 +20,7 @@ typedef struct
     float target_angle_yaw; // rad
     float INS_YAW;  // rad
     float INS_YAW_ACC; // rad/s ,角加速度
+    uint8_t neck_state;
 
     /*射击参数*/
     float shoot_frq; // Hz
@@ -40,6 +41,9 @@ typedef struct
 typedef struct
 {
     uint8_t frame_header;
+
+    //yaw轴数据
+    float yaw_position;
 
     uint8_t frame_tailer;
     uint8_t check_sum;

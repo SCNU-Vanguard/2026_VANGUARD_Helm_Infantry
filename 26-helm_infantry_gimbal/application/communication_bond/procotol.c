@@ -32,8 +32,7 @@
 /* 485接收 */
 void Serial_485_Receive_Control(void)
 {
-    
-	;
+    gimbal_cmd->yaw_position = uart2_rx_message.yaw_position;
 
 }
 
@@ -46,14 +45,24 @@ void Serial_485_Send_Control(void)
     uart2_tx_message.chassis_mode = chassis_cmd -> move_mode ;
 
     // /*云台参数*/
+		if( gimbal_cmd -> target_angle_yaw - gimbal_cmd -> current_angle_yaw > PI )
+		{
+				gimbal_cmd -> target_angle_yaw -= 2 * PI;
+		}
+		else if( gimbal_cmd -> target_angle_yaw - gimbal_cmd -> current_angle_yaw < -PI )
+		{
+				gimbal_cmd -> target_angle_yaw += 2 * PI;
+		}
+	
     uart2_tx_message.target_angle_yaw = gimbal_cmd -> target_angle_yaw ;
     uart2_tx_message.INS_YAW = INS.Yaw ;
-    uart2_tx_message.INS_YAW_ACC = INS.Accel[IMU_Y];
+    uart2_tx_message.INS_YAW_ACC = INS.Gyro[2];
     uart2_tx_message.gimbal_mode = gimbal_cmd -> gimbal_mode ;
+    uart2_tx_message.neck_state  = gimbal_cmd -> neck_state  ;
 
     /*射击参数*/
     uart2_tx_message.shoot_frq = shoot_cmd -> shoot_frq ;
-    uart2_tx_message.shoot_mode = shoot_cmd -> mode ;
+    uart2_tx_message.shoot_mode = shoot_cmd -> auto_state ;
 
     uart2_send_data(&uart2_tx_message);
     uart2_transmit_control( );

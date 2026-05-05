@@ -56,9 +56,12 @@ typedef struct
 
 	float target_angle_neck;//rad
 
+	//用于传输底盘板子数据
 	float target_angle_yaw;//rad
-	float current_angle_yaw;//上位机传下的IMU角度 rad
-	float current_yaw_acc;//上位机传下的IMU角加速度 rad/s
+	float current_angle_yaw;// rad
+	float current_yaw_acc;// rad/s
+
+	float yaw_position;//rad
 
 	float auto_yaw;//上位机传入
 	float auto_pitch_head;

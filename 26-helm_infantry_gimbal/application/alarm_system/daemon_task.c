@@ -14,6 +14,8 @@
 
 #include "main.h"
 
+#include "defense_center.h"
+
 #include "FreeRTOS.h"
 #include "task.h"
 #include "cmsis_os.h"
@@ -54,6 +56,7 @@ static void Daemon_Task( void *argument )
 
     for( ; ; )
     {
+        Supervisor_Task( );
 
         
         daemon_task_diff = osKernelGetTickCount( ) - time;

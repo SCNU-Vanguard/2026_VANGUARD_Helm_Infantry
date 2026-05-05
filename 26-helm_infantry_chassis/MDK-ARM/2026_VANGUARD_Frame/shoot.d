@@ -45,4 +45,12 @@
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h \
-  ..\bsp\USART\bsp_usart.h ..\Core\Inc\usart.h
+  ..\bsp\USART\bsp_usart.h ..\Core\Inc\usart.h \
+  ..\algorithm\controller\PID\pid.h \
+  ..\Middlewares\ST\ARM\DSP\Inc\arm_math.h \
+  ..\Drivers\CMSIS\Include\cmsis_compiler.h \
+  C:\Keil5\ARM\ARMCLANG\include\float.h \
+  C:\Keil5\ARM\ARMCLANG\include\limits.h ..\module\motor\drv_motor.h \
+  ..\bsp\CAN\bsp_can.h ..\Core\Inc\fdcan.h \
+  ..\module\motor\DJI_motor\DJI_motor.h \
+  ..\module\defense_center\defense_center.h

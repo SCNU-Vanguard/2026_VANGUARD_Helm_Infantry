@@ -64,7 +64,7 @@ static void Frame_Device_Init(void)
 	// BMI088_Init(&hspi2,0);
 	bmi088_h7 = BMI088_Register(&bmi088_init_h7);
 
-	HAL_UART_Receive_IT(&huart2, &uart2_current_byte, 1);
+	HAL_UART_Receive_IT(&huart2, &uart2_current_byte, 1); // 开启UART2接收中断
 	//referee_data = Referee_Init(&huart1);
 
 	/******************************module模块初始化*****************************/
@@ -74,6 +74,8 @@ static void Frame_Device_Init(void)
 	Chassis_Init( );
 
 	Gimbal_DM6006_Init( );
+
+	Shoot_Init( );
 
 
 

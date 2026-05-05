@@ -64,4 +64,4 @@
   C:\Keil5\ARM\ARMCLANG\include\float.h \
   C:\Keil5\ARM\ARMCLANG\include\limits.h ..\bsp\CAN\bsp_can.h \
   ..\Core\Inc\fdcan.h ..\module\defense_center\defense_center.h \
-  ..\application\INS\INS.h
+  ..\application\INS\INS.h ..\module\motor\DJI_motor\DJI_motor.h

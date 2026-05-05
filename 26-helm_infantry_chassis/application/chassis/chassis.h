@@ -38,6 +38,7 @@ typedef struct
 
 typedef struct
 {
+	//只允许调用
 	float vx;//线速度
 	float vy;
 	float vw;//底盘角速度，rad/s,顺时针为正

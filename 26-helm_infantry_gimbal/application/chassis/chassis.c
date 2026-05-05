@@ -13,6 +13,7 @@
 #include <stdlib.h>
 
 #include "chassis.h"
+#include "shoot.h"
 
 #include "DM_motor.h"
 #include "DJI_motor.h"
@@ -29,7 +30,7 @@ chassis_cmd_t *chassis_cmd = &chassis_cmd_storage;//静态初始化，防止空�
 void Chassis_Set_Mode(void)
 {
     //模式切换
-    if( (rc_data->rc.gear_shift == STOP_MODE && key_flag == 0) || keyboard_enable_flag == 0 )
+    if( (rc_data->rc.gear_shift == STOP_MODE && key_flag == 0) || ( keyboard_enable_flag == 0 && key_flag == 1) )
     {
         chassis_cmd -> chassis_mode = CHASSIS_MODE_STOP;
     }
@@ -86,7 +87,14 @@ void Chassis_Console(void)
 
             chassis_cmd -> vx = rc_data->rc.rocker_l1 * REMOTE_CHASSIS_SENSITIVITY_VX;
             chassis_cmd -> vy = rc_data->rc.rocker_l_ * REMOTE_CHASSIS_SENSITIVITY_VY;
-            chassis_cmd -> vw = rc_data->rc.dial * REMOTE_CHASSIS_SENSITIVITY_VW;
+            if(manual_shoot_flag == 0)
+            {
+                chassis_cmd -> vw = rc_data->rc.dial * REMOTE_CHASSIS_SENSITIVITY_VW;
+            }
+            else
+            {
+                chassis_cmd -> vw = 0;
+            }
 
             break;
         }

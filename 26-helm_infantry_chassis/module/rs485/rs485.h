@@ -9,6 +9,9 @@
 typedef struct
 {
     uint8_t frame_header;
+    
+    //yaw轴数据
+    float yaw_position;
 
     uint8_t frame_tailer;
     uint8_t check_sum;
@@ -27,14 +30,18 @@ typedef struct
     float target_angle_yaw; // rad
     float INS_YAW;  // rad
     float INS_YAW_ACC; // rad/s ,角加速度
+		uint8_t neck_state;
 
     /*射击参数*/
     float shoot_frq; // Hz
     
     /*运动模式*/
-    uint8_t chassis_mode;//2
-    uint8_t gimbal_mode;//2
+    uint8_t chassis_mode;//3
+    uint8_t gimbal_mode;//3
     uint8_t shoot_mode; //0：停止，1：拨打
+
+    /* 使能标志位 */ 
+    uint8_t enable_flag;
 
 
     uint8_t frame_tailer;
@@ -54,10 +61,11 @@ extern uint8_t uart2_status;
 extern uint32_t last_uart2_uwTick;
 extern uint8_t uart2_current_byte;
 extern uint16_t uart2_buffer_length;
-extern uint8_t rs485_status;
 
 void uart2_send_data(Tx_packed_t *data_p);
 void uart2_transmit_control(void);
+void uart2_start_receive(void);
+void uart2_error_recover(void);
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart);
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart);
 void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart);

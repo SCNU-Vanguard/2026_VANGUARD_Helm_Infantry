@@ -25,7 +25,8 @@ uint16_t uart2_buffer_length = 0;
 uint8_t uart2_current_byte = 0;
 
 float cnttttt = 0;
-uint8_t rs485_error = 0;//错误标志位
+uint8_t rs485_status = 0;
+uint32_t rs485_cnt ;
 
 static void uart2_append_byte(uint8_t byte)
 {
@@ -67,7 +68,7 @@ static uint8_t uart2_extract_frame(Rx_packed_t *frame)
             uart2_buffer_length--;
             continue;
         }
-
+        rs485_cnt++;
         memcpy(frame, uart2_receive_buffer, sizeof(Rx_packed_t));
         memmove(uart2_receive_buffer, uart2_receive_buffer + sizeof(Rx_packed_t), uart2_buffer_length - sizeof(Rx_packed_t));
         uart2_buffer_length -= sizeof(Rx_packed_t);
@@ -101,23 +102,22 @@ void uart2_transmit_control(void) // 发送控制函数，发送时直接调用�
     }
 }
 
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) // 接收回调函数
+{
+    if (huart == &huart2)
+    {
+        uart2_append_byte(uart2_current_byte);
 
- void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) // 接收回调函数
- {
-     if (huart == &huart2)
-     {
-         uart2_append_byte(uart2_current_byte);
-
-         if (uart2_extract_frame(&uart2_rx_message))
-         {
-             last_uart2_uwTick = uwTick;
-             uart2_status = ready_to_transmit;
-             uart2_transmit_control();
-             cnttttt++;
-         }
-         HAL_UART_Receive_IT(&huart2, &uart2_current_byte, 1);
-     }
- }
+        if (uart2_extract_frame(&uart2_rx_message))
+        {
+            last_uart2_uwTick = uwTick;
+            uart2_status = ready_to_transmit;
+            uart2_transmit_control();
+            cnttttt++;
+        }
+        HAL_UART_Receive_IT(&huart2, &uart2_current_byte, 1);
+    }
+}
 
 void uart2_online_check(void)
 {
@@ -128,21 +128,19 @@ void uart2_online_check(void)
         uart2_transmit_control();
         if (uwTick - last_uart2_uwTick > 50)
         {
-            rs485_error = 1;
-            memset( &uart2_tx_message, 0, sizeof(Tx_packed_t) );
-            memset( &uart2_rx_message, 0, sizeof(Rx_packed_t) );
+            //uart2_rx_message.gimbal_angle_yaw_motor2imu = 0;
         }
     }
 }
 
- void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart) // 发送回调函数
- {
-     if (huart == &huart2)
-     {
-         HAL_GPIO_WritePin(GPIOD, GPIO_PIN_4, GPIO_PIN_RESET);
-         uart2_status = ready_to_receive;
-     }
- }
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart) // 发送回调函数
+{
+    if (huart == &huart2)
+    {
+        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_4, GPIO_PIN_RESET);
+        uart2_status = ready_to_receive;
+    }
+}
 
 // void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart) // 错误回调函数
 // {

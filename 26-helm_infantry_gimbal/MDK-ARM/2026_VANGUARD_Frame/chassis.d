@@ -4,7 +4,7 @@
   ..\application\chassis\chassis.h \
   C:\Keil5\ARM\ARMCLANG\include\stdint.h \
   ..\application\robot_frame_config.h \
-  ..\application\chassis\balance_chassis.h \
+  ..\application\chassis\balance_chassis.h ..\application\shoot\shoot.h \
   ..\module\motor\DM_motor\DM_motor.h ..\module\motor\drv_motor.h \
   ..\algorithm\controller\PID\pid.h C:\Keil5\ARM\ARMCLANG\include\math.h \
   ..\Middlewares\ST\ARM\DSP\Inc\arm_math.h \

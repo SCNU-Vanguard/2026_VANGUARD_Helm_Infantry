@@ -173,7 +173,11 @@ CAN_instance_t *CAN_Register(can_init_config_t *config)
 	}
 
 	CAN_instance_t *instance = (CAN_instance_t *) malloc(sizeof(CAN_instance_t)); // 分配空间
-	memset(instance, 0, sizeof(CAN_instance_t));                                                                     // 分配的空间未必是0,所以要先清空
+	if (instance == NULL)
+	{
+		return NULL;
+	}
+	memset(instance, 0, sizeof(CAN_instance_t)); // 分配的空间未必是0,所以要先清空
 
 #ifdef FDCAN	
 	// 进行发送报文的配置

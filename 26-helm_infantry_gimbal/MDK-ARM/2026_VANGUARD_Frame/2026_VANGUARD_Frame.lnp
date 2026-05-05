@@ -68,6 +68,7 @@
 "2026_vanguard_frame\drv_motor.o"
 "2026_vanguard_frame\dji_motor.o"
 "2026_vanguard_frame\dm_motor.o"
+"2026_vanguard_frame\vesc_motor.o"
 "2026_vanguard_frame\remote_control.o"
 "2026_vanguard_frame\wfly_control.o"
 "2026_vanguard_frame\remote_vt03.o"
