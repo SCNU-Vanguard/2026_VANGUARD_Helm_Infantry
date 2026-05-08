@@ -57,4 +57,5 @@
   ..\Middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS_V2\cmsis_os2.h \
   ..\application\alarm_system\daemon_task.h \
   ..\application\alarm_system\daemon.h \
-  ..\module\message_center\message_center.h
+  ..\module\message_center\message_center.h \
+  ..\module\defense_center\defense_center.h

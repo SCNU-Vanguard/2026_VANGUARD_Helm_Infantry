@@ -13,10 +13,8 @@
 #define __ROBOT_FRAME_INIT_H__
 
 #include <stdint.h>
-#include "referee.h"
 
 
-extern Referee_InfoTypedef	*referee_data;
 extern void Robot_Frame_Init(void);
     		
 

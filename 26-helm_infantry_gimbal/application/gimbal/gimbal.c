@@ -53,6 +53,16 @@ PID_t pitch_head_speed_pid = {
     .dead_band = 0.0f,
 };
 
+/*云台跟随底盘*/
+// PID_t gimbal_follow_chassis_angle_pid = {
+//     .kp = 0.1,
+//     .ki = 0,
+//     .kd = 0,	
+//     .output_limit = 2.0f,//注意-PI - PI 
+//     .integral_limit = 0.0f,
+//     .dead_band = 0.0f,
+// };
+
 //pitch头部电机,6020
 motor_init_config_t pitch_head_init = {
     .controller_param_init_config = {
@@ -171,8 +181,8 @@ void Gimbal_Disable(void)
 
     DJI_Motor_Disable(gimbal_pitch_head);
 		
-		gimbal_pitch_head->motor_controller.angle_PID->output = 0;
-		gimbal_pitch_head->motor_controller.speed_PID->output = 0;
+    gimbal_pitch_head->motor_controller.angle_PID->output = 0;
+    gimbal_pitch_head->motor_controller.speed_PID->output = 0;
 		
 }
 
@@ -201,6 +211,8 @@ void Gimbal_Handle_Exception(void)
 
 }
 
+uint32_t pause_count = 0;
+
 //模式选择
 void Gimbal_Set_Mode(void)
 {
@@ -227,6 +239,17 @@ void Gimbal_Set_Mode(void)
         gimbal_cmd -> neck_state = rc_data->rc_rise_count[VT03_RC_RISE_AUTO_KEY_L] % 2;//FN键控制脖子状态
         gimbal_cmd -> auto_state = rc_data->rc_rise_count[VT03_RC_RISE_AUTO_KEY_R] % 2;//拍照键 -- 开启自瞄
 
+        if(  rc_data->rc.pause == 1 )
+        {
+            pause_count++;
+            if(pause_count > 1000)
+            {
+                pause_count = 0;
+                key_flag = 0;
+                keyboard_enable_flag = 0;
+            }
+        }
+
     }
 
     else if( gimbal_cmd -> gimbal_mode == GIMBAL_MODE_KEYBOARD )
@@ -241,9 +264,9 @@ void Gimbal_Set_Mode(void)
             gimbal_cmd -> auto_state = GIMBAL_MANUAL;
         }
 
-        gimbal_cmd -> neck_state = GET_KEY_COUNT(VT03_KEY_PRESS , KEY_G) % 2;//按键G控制脖子状态
+        gimbal_cmd -> neck_state = GET_KEY_COUNT(VT03_KEY_PRESS , KEY_F) % 2;//按键F控制脖子状态
 
-        gimbal_cmd -> gimbal_climb_flag = GET_KEY_COUNT(VT03_KEY_PRESS_WITH_CTRL , KEY_G) % 2;//ctrl + G 
+        gimbal_cmd -> gimbal_climb_flag = GET_KEY_COUNT(VT03_KEY_PRESS_WITH_CTRL , KEY_F) % 2;//ctrl + G 
 
     }
 
@@ -282,7 +305,7 @@ void Gimbal_Console(void)
 //		gimbal_pitch_head->motor_controller.angle_PID->kd = pid_pitch_d_out;
 	
 		
-        
+        gimbal_cmd -> current_angle_neck = gimbal_pitch_neck->receive_data.position;
 		gimbal_cmd -> current_angle_yaw = INS.Yaw;
 		gimbal_cmd -> current_angle_head = INS.Pitch;
 
@@ -308,12 +331,15 @@ void Gimbal_Console(void)
         if(gimbal_cmd -> neck_state == NECK_LAY)
         {
             fire_enable_flag = 0;//允许拨弹
+            //neck
             if( fabs(gimbal_cmd -> yaw_position - CHASSIS_GIMBAL_LAY_ZERO) < 0.5f  )
             {
                 gimbal_cmd -> target_angle_neck = 1.1f;//缩头
-                gimbal_pitch_neck -> transmit_data.velocity_des = 2.1f;
+                gimbal_pitch_neck -> transmit_data.velocity_des = 1.5f;
             }
-            
+            //head
+            gimbal_cmd -> target_angle_yaw = INS.Yaw;
+            gimbal_cmd -> target_angle_head = 0.03f;
         }
 
         else if(gimbal_cmd -> neck_state == NECK_STAND)
@@ -321,28 +347,23 @@ void Gimbal_Console(void)
             fire_enable_flag = 1;//允许拨弹
 
             gimbal_cmd -> target_angle_neck = GIMBAL_NECK_STAND;//抬头
-            gimbal_pitch_neck -> transmit_data.velocity_des = 2.1f;
+            gimbal_pitch_neck -> transmit_data.velocity_des = 1.5f;
         }
 
         
        if( gimbal_cmd -> neck_state == NECK_STAND && gimbal_cmd -> auto_state == GIMBAL_MANUAL )
        {
+				 
            gimbal_cmd -> target_angle_yaw += - rc_data->rc.rocker_r_ * REMOTE_YAW_SENSITIVITY;
            gimbal_cmd -> target_angle_head += - rc_data->rc.rocker_r1 * REMOTE_PITCH_SENSITIVITY;
        }
-       else if( gimbal_cmd -> neck_state == NECK_LAY )
-       {
-           gimbal_cmd -> target_angle_yaw = INS.Yaw;
-           gimbal_cmd -> target_angle_head = INS.Pitch;
-       }
-       else if( gimbal_cmd -> auto_state == GIMBAL_AUTO )
+       else if( gimbal_cmd -> neck_state == NECK_STAND && gimbal_cmd -> auto_state == GIMBAL_AUTO )
        {
            gimbal_cmd -> target_angle_yaw = gimbal_cmd -> auto_yaw;
            gimbal_cmd -> target_angle_head = gimbal_cmd -> auto_pitch_head;
-        }
+     }   
 
         //限幅
-
         if(gimbal_cmd -> target_angle_head < - 0.5 )
         {
             gimbal_cmd -> target_angle_head = 0.5;
@@ -351,14 +372,12 @@ void Gimbal_Console(void)
         {
             gimbal_cmd -> target_angle_head = 0.18;
         }
-	
-				
-
+			
         DJI_Motor_Set_Ref(gimbal_pitch_head, gimbal_cmd -> target_angle_head);
         DM_Motor_SetTar(gimbal_pitch_neck, gimbal_cmd -> target_angle_neck);
+
         target_pitch = gimbal_cmd -> target_angle_head ;
-        current_pitch = INS.Pitch;
-        
+        current_pitch = INS.Pitch;   
 
     }
 
@@ -369,25 +388,84 @@ void Gimbal_Console(void)
         if( gimbal_cmd -> gimbal_climb_flag == 0)//不过隧道或爬坡 可加入底盘imu检测
         {
             Gimbal_Enable();
+            // gimbal_cmd->gimbal_follow = 0;
+            // gimbal_follow_chassis_angle_pid.output = 0;
+            // gimbal_follow_chassis_angle_pid.i_out = 0;
 
             //脖子控制
             if(gimbal_cmd -> neck_state == NECK_LAY)
             {
                 fire_enable_flag = 0;//允许拨弹
-                gimbal_cmd -> target_angle_neck = GIMBAL_NECK_LAY;//缩头
-                gimbal_pitch_neck -> transmit_data.velocity_des = 0.5f;
+                //neck
+                if( fabs(gimbal_cmd -> yaw_position - CHASSIS_GIMBAL_LAY_ZERO) < 0.5f  )
+                {
+                    gimbal_cmd -> target_angle_neck = 1.1f;//缩头
+                    gimbal_pitch_neck -> transmit_data.velocity_des = 1.5f;
+                }
+                //head
+                gimbal_cmd -> target_angle_yaw = INS.Yaw;
+                gimbal_cmd -> target_angle_head = 0.03f;
             }
 
             else if(gimbal_cmd -> neck_state == NECK_STAND)
             {
                 fire_enable_flag = 1;//允许拨弹
+
                 gimbal_cmd -> target_angle_neck = GIMBAL_NECK_STAND;//抬头
-                gimbal_pitch_neck -> transmit_data.velocity_des = 0.5f;
+                gimbal_pitch_neck -> transmit_data.velocity_des = 1.5f;
             }
+
+            if( gimbal_cmd -> neck_state == NECK_STAND && gimbal_cmd -> auto_state == GIMBAL_MANUAL )
+            {
+								
+                gimbal_cmd -> target_angle_yaw += - rc_data->mouse.x * KEYBOARD_YAW_SENSITIVITY;
+                gimbal_cmd -> target_angle_head += - rc_data->mouse.y * KEYBOARD_PITCH_SENSITIVITY;
+            }
+            else if( gimbal_cmd -> neck_state == NECK_STAND && gimbal_cmd -> auto_state == GIMBAL_AUTO )
+            {
+                gimbal_cmd -> target_angle_yaw = gimbal_cmd -> auto_yaw;
+                gimbal_cmd -> target_angle_head = gimbal_cmd -> auto_pitch_head;
+            }   
+
+            //限幅
+            if(gimbal_cmd -> target_angle_head < - 0.5 )
+            {
+                gimbal_cmd -> target_angle_head = 0.5;
+            }
+            else if(gimbal_cmd -> target_angle_head > 0.18 )
+            {
+                gimbal_cmd -> target_angle_head = 0.18;
+            }
+                
+            DJI_Motor_Set_Ref(gimbal_pitch_head, gimbal_cmd -> target_angle_head);
+            DM_Motor_SetTar(gimbal_pitch_neck, gimbal_cmd -> target_angle_neck);
+
         }
         else if( gimbal_cmd -> gimbal_climb_flag == 1 )
         {
-            Gimbal_Disable();
+            fire_enable_flag = 0;//不允许拨弹和开摩擦轮
+            gimbal_cmd -> target_angle_neck = 1.1f;//缩头
+            gimbal_pitch_neck -> transmit_data.velocity_des = 1.5f;
+            DM_Motor_SetTar(gimbal_pitch_neck, gimbal_cmd -> target_angle_neck);
+					
+            //yaw处理,向左负，向右正
+			// 			float error_angle = gimbal_cmd -> yaw_position - CHASSIS_GIMBAL_LAY_ZERO;
+            // if(error_angle > PI)
+            // {
+            //     error_angle -= 2 * PI;
+            // }
+            // else if(error_angle < -PI)
+            // {
+            //     error_angle += 2 * PI;
+            // }
+
+            // gimbal_cmd->gimbal_follow = PID_Position(&gimbal_follow_chassis_angle_pid, error_angle , 0.0f);
+            // gimbal_cmd -> target_angle_yaw -= gimbal_cmd->gimbal_follow;						
+
+            DJI_Motor_Disable(gimbal_pitch_head);
+            gimbal_pitch_head->motor_controller.angle_PID->output = 0;
+            gimbal_pitch_head->motor_controller.speed_PID->output = 0;
+
         }
         
         

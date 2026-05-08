@@ -52,9 +52,21 @@
   ..\Middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS_V2\cmsis_os.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS_V2\cmsis_os2.h \
   ..\Core\Inc\rng.h ..\application\robot_frame_init.h \
-  ..\module\referee\referee.h ..\bsp\USART\bsp_usart.h \
-  ..\Core\Inc\usart.h ..\module\buzzer\buzzer.h ..\bsp\PWM\bsp_pwm.h \
-  ..\Core\Inc\tim.h ..\module\led\WS2812\ws2812.h ..\bsp\SPI\bsp_spi.h \
-  ..\Core\Inc\spi.h ..\module\remote\WFLY\wfly_control.h \
+  ..\module\buzzer\buzzer.h ..\bsp\PWM\bsp_pwm.h ..\Core\Inc\tim.h \
+  ..\module\led\WS2812\ws2812.h ..\bsp\SPI\bsp_spi.h ..\Core\Inc\spi.h \
+  ..\module\remote\WFLY\wfly_control.h \
   C:\Keil5\ARM\ARMCLANG\include\stdlib.h \
-  C:\Keil5\ARM\ARMCLANG\include\string.h
+  C:\Keil5\ARM\ARMCLANG\include\string.h ..\bsp\USART\bsp_usart.h \
+  ..\Core\Inc\usart.h ..\module\rs485\rs485.h \
+  ..\application\Referee_UI\referee_task.h \
+  ..\application\Referee_UI\rm_referee.h \
+  ..\application\Referee_UI\referee_protocol.h \
+  C:\Keil5\ARM\ARMCLANG\include\stdarg.h \
+  C:\Keil5\ARM\ARMCLANG\include\stdio.h \
+  ..\algorithm\basic_function\user_lib.h \
+  C:\Keil5\ARM\ARMCLANG\include\stdbool.h \
+  ..\Middlewares\ST\ARM\DSP\Inc\arm_math.h \
+  ..\Drivers\CMSIS\Include\cmsis_compiler.h \
+  C:\Keil5\ARM\ARMCLANG\include\float.h \
+  C:\Keil5\ARM\ARMCLANG\include\limits.h \
+  ..\module\defense_center\defense_center.h

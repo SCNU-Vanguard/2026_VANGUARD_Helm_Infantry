@@ -1,4 +1,4 @@
-﻿/**
+/**
 ******************************************************************************
  * @file    shoot.c
  * @brief
@@ -25,7 +25,7 @@ VESC_motor_instance_t *friction_motor[3];
 static shoot_cmd_t shoot_cmd_storage;
 shoot_cmd_t *shoot_cmd = &shoot_cmd_storage;//闈欐€佸垵濮嬪寲锛岄槻姝㈢┖鎸囬拡
 
-uint8_t fire_enable_flag = 0;//灏勫嚮浣胯兘鏍囧織浣?
+uint8_t fire_enable_flag = 0;//拨弹标志位
 uint8_t manual_shoot_flag = 0 ;
 
 
@@ -125,13 +125,13 @@ void Shoot_Observer( )
     ;
 }
 
-// 澶勭悊寮傚父
+
 void Shoot_Handle_Exception( )
 {
     ;
 }
 
-// 璁剧疆灏勫嚮妯″紡
+
 void Shoot_Set_Mode( )
 {
     //妯″紡鍒囨崲
@@ -147,15 +147,15 @@ void Shoot_Set_Mode( )
 
     else if(rc_data->rc.gear_shift == KEYBOARD_MODE || ROBOT_FRAME_KEYBOARD_ENABLED() )
     {
-        shoot_cmd -> mode = SHOOT_MODE_KEYBOARD;//閿紶妯″紡,榛樿浣胯兘
+        shoot_cmd -> mode = SHOOT_MODE_KEYBOARD;
     }
 
-    //鎵虫満閿紝寮€鍚懇鎿﹁疆
+
     if( shoot_cmd -> mode == SHOOT_MODE_REMOTE )
     {
         if(fire_enable_flag == 1)
         {
-            shoot_cmd -> auto_state = rc_data->rc_rise_count[VT03_RC_RISE_TRIGGE_KEY] % 3;//妯″紡鍒囨崲,鍐冲畾鎵嬫墦杩樻槸鑷瀯
+            shoot_cmd -> auto_state = rc_data->rc_rise_count[VT03_RC_RISE_TRIGGE_KEY] % 3;
         }
         else 
         {
@@ -164,7 +164,7 @@ void Shoot_Set_Mode( )
     }
     else if( shoot_cmd -> mode == SHOOT_MODE_KEYBOARD )
     {
-        //閿紶妯″紡涓嬶紝鎸変綇榧犳爣宸﹂敭寮€鐏?
+
         if( rc_data->mouse.press_l == 1 )
         {
             shoot_cmd -> auto_state = SHOOT_MANUAL;
@@ -172,6 +172,15 @@ void Shoot_Set_Mode( )
         else
         {
             shoot_cmd -> auto_state = SHOOT_STOP;
+        }
+
+        if( rc_data->key[0].r== 1 )
+        {
+            shoot_cmd -> friction_state = FRICTION_START;//开启摩擦轮
+        }
+        else if( rc_data->key[0].g == 1 )//关闭摩擦轮
+        {
+            shoot_cmd -> friction_state = FRICTION_STOP;
         }
     }
 
@@ -182,8 +191,8 @@ void Shoot_Reference( )
     ;
 }
 
+uint8_t test_falg = 0;
 
-// 璁＄畻鎺у埗閲?
 void Shoot_Console( )
 {
     switch(shoot_cmd->mode)
@@ -229,19 +238,28 @@ void Shoot_Console( )
             {
                 Shoot_Enable();
 							
-							  //if( rc_data->key[0].g == 1 )
-									
-                shoot_cmd -> shoot_v = SHOOT_V;
-                Shoot_Set_All_Friction(shoot_cmd -> shoot_v);//璁剧疆鐩爣鍊?
+                //if( rc_data->key[0].g == 1 )
+				if(shoot_cmd->friction_state == FRICTION_START)
+                {
+                    shoot_cmd -> shoot_v = SHOOT_V;
+                }
+                if(shoot_cmd->friction_state == FRICTION_STOP)
+                {
+                    shoot_cmd -> shoot_v = 0;
+                }
+
+                Shoot_Set_All_Friction(shoot_cmd -> shoot_v);
+
                 if(Shoot_VESC_Is_Ready())
                 {
                     if( shoot_cmd -> auto_state == SHOOT_MANUAL )
                     {
-                        shoot_cmd -> shoot_frq = 10.0f;
+                        test_falg = 1;
+                        shoot_cmd -> shoot_frq = 3000.0f;
                     }
                     else if( shoot_cmd -> auto_state == SHOOT_AUTO )
                     {
-                        shoot_cmd -> shoot_frq = 10.0f;
+                        shoot_cmd -> shoot_frq = 3000.0f;
                     }
                     else
                     {
@@ -277,7 +295,7 @@ void Shoot_Console( )
 
 }
 
-// 鍙戦€佹帶鍒堕噺
+
 void Shoot_Send_Cmd( )
 {
     for(int i = 0; i <3; i++)

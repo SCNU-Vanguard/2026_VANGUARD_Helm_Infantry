@@ -17,7 +17,7 @@ Library Manager: ArmAr.exe V6.21
 Hex Converter:   FromElf.exe V6.21
 CPU DLL:         SARMCM3.DLL V5.39.0.0
 Dialog DLL:      DCM.DLL V1.17.5.0
-Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V3.2.0.0
+Target DLL:      CMSIS_AGDI.dll V1.33.16.0
 Dialog DLL:      TCM.DLL V1.56.4.0
  
 <h2>Project:</h2>
@@ -27,16 +27,13 @@ Project File Date:  05/04/2026
 <h2>Output:</h2>
 *** Using Compiler 'V6.21', folder: 'C:\Keil5\ARM\ARMCLANG\Bin'
 Build target '2026_VANGUARD_Frame'
+compiling lpf.c...
 compiling buzzer.c...
 compiling chassis.c...
-../application/gimbal/gimbal.c(148): warning: taking address of packed member 'Pitch' of class or structure 'INS_behaviour_t' may result in an unaligned pointer value [-Waddress-of-packed-member]
-  148 |     pitch_head_init.controller_param_init_config.other_angle_feedback_ptr = &INS.Pitch;//使用imu的yaw角度作为yaw电机的角度反馈
-      |                                                                              ^~~~~~~~~
-1 warning generated.
-compiling gimbal.c...
+compiling procotol.c...
 linking...
-Program Size: Code=156532 RO-data=3060 RW-data=2408 ZI-data=52008  
-"2026_VANGUARD_Frame\2026_VANGUARD_Frame.axf" - 0 Error(s), 1 Warning(s).
+Program Size: Code=158116 RO-data=3072 RW-data=2408 ZI-data=52064  
+"2026_VANGUARD_Frame\2026_VANGUARD_Frame.axf" - 0 Error(s), 0 Warning(s).
 
 <h2>Software Packages used:</h2>
 

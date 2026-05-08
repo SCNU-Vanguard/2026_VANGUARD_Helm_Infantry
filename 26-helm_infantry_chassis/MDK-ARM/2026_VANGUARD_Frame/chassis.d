@@ -3,8 +3,7 @@
   C:\Keil5\ARM\ARMCLANG\include\stdlib.h \
   ..\application\chassis\chassis.h \
   C:\Keil5\ARM\ARMCLANG\include\stdint.h \
-  ..\application\robot_frame_config.h ..\application\gimbal\gimbal.h \
-  ..\module\motor\DM_motor\DM_motor.h ..\module\motor\drv_motor.h \
+  ..\module\motor\DJI_motor\DJI_motor.h ..\module\motor\drv_motor.h \
   ..\algorithm\controller\PID\pid.h C:\Keil5\ARM\ARMCLANG\include\math.h \
   ..\Middlewares\ST\ARM\DSP\Inc\arm_math.h \
   ..\Drivers\CMSIS\Include\cmsis_compiler.h \
@@ -51,4 +50,7 @@
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h \
   ..\Core\Inc\fdcan.h ..\module\defense_center\defense_center.h \
-  ..\module\motor\DJI_motor\DJI_motor.h
+  ..\module\super_cap\super_cap.h \
+  C:\Keil5\ARM\ARMCLANG\include\stdbool.h \
+  ..\application\robot_frame_config.h ..\application\gimbal\gimbal.h \
+  ..\module\motor\DM_motor\DM_motor.h

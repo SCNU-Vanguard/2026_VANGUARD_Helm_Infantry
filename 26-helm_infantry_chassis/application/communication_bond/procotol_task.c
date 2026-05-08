@@ -21,6 +21,7 @@
 #include "procotol.h"
 
 #include "message_center.h"
+#include "defense_center.h"
 #include "rs485.h"
 
 #define PROCOTOL_TASK_PERIOD 5 // ms
@@ -59,6 +60,8 @@ static void Procotol_Task(void *argument)
         Serial_485_Send_Control();
 
         uart2_online_check( );
+			
+				Supervisor_Task();
         
         procotol_task_diff = osKernelGetTickCount( ) - time;
         time               = osKernelGetTickCount( );

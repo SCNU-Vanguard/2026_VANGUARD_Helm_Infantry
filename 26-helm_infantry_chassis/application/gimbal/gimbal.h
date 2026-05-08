@@ -57,6 +57,7 @@ typedef struct
 	float current_angle_head;
 
 	float target_angle_neck;//rad
+	float current_angle_neck;
 
 	//用于传输底盘板子数据
 	float target_angle_yaw;//rad

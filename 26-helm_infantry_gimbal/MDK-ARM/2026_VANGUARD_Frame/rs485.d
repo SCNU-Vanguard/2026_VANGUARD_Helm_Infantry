@@ -46,4 +46,6 @@
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_usb.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pcd_ex.h \
   ..\Core\Inc\dma.h ..\Core\Inc\usart.h ..\Core\Inc\gpio.h \
-  C:\Keil5\ARM\ARMCLANG\include\string.h ..\application\gimbal\gimbal.h
+  C:\Keil5\ARM\ARMCLANG\include\string.h ..\application\gimbal\gimbal.h \
+  ..\module\defense_center\defense_center.h \
+  ..\algorithm\basic_function\CRC.h

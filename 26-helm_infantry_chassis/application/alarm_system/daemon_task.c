@@ -23,6 +23,7 @@
 #include "daemon.h"
 
 #include "message_center.h"
+#include "defense_center.h"
 
 #define DAEMON_TASK_PERIOD 10 // ms
 
@@ -55,7 +56,6 @@ static void Daemon_Task( void *argument )
     for( ; ; )
     {
 
-        
         daemon_task_diff = osKernelGetTickCount( ) - time;
         time = osKernelGetTickCount( );
         osDelayUntil( time + DAEMON_TASK_PERIOD );

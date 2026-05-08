@@ -31,6 +31,13 @@ typedef enum
 	SHOOT_AUTO = 2,
 }shoot_auto_e;
 
+/* 摩擦轮模式 */
+typedef enum
+{
+	FRICTION_STOP = 0,
+	FRICTION_START = 1,
+}shoot_friction_mode_e;
+
 typedef struct
 {
 	/* data */
@@ -41,6 +48,7 @@ typedef struct
 	/* mode */
 	shoot_mode_e mode;
 	shoot_auto_e auto_state;
+	shoot_friction_mode_e friction_state;
 
 	/* data */
 	float shoot_frq;//Hz 

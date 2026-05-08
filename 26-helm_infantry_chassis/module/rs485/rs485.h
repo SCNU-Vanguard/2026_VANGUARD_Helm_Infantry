@@ -14,7 +14,7 @@ typedef struct
     float yaw_position;
 
     uint8_t frame_tailer;
-    uint8_t check_sum;
+    uint16_t crc16;
 } __attribute__((packed)) Tx_packed_t;
 
 typedef struct
@@ -30,7 +30,8 @@ typedef struct
     float target_angle_yaw; // rad
     float INS_YAW;  // rad
     float INS_YAW_ACC; // rad/s ,角加速度
-		uint8_t neck_state;
+    float current_angle_neck;
+    uint8_t neck_state;
 
     /*射击参数*/
     float shoot_frq; // Hz
@@ -42,10 +43,12 @@ typedef struct
 
     /* 使能标志位 */ 
     uint8_t enable_flag;
-
+		
+		//ui绘制
+    uint8_t ui_refresh_key;
 
     uint8_t frame_tailer;
-    uint8_t check_sum;
+    uint16_t crc16;
 } __attribute__((packed)) Rx_packed_t;
 
 extern Tx_packed_t uart2_tx_message;
@@ -62,6 +65,8 @@ extern uint32_t last_uart2_uwTick;
 extern uint8_t uart2_current_byte;
 extern uint16_t uart2_buffer_length;
 
+void RS485_Init(UART_HandleTypeDef *uart_handle);
+uint8_t RS485_Is_Online(void);
 void uart2_send_data(Tx_packed_t *data_p);
 void uart2_transmit_control(void);
 void uart2_start_receive(void);

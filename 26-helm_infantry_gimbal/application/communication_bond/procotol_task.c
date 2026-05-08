@@ -25,7 +25,7 @@
 #include "VPC.h"
 #include "Serial.h"
 
-#define PROCOTOL_TASK_PERIOD 1 // ms
+#define PROCOTOL_TASK_PERIOD 5 // ms
 
 osThreadId_t procotol_task_handel;
 

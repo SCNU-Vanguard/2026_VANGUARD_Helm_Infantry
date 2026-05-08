@@ -46,6 +46,7 @@
 #include "remote_vt03.h"
 
 #include "VPC.h"
+#include "rs485.h"
 
 float init_time;
 
@@ -75,7 +76,8 @@ static void Frame_Device_Init(void)
 	bmi088_h7 = BMI088_Register(&bmi088_init_h7);
 
 	rc_data = Vt03_Control_Init(&huart10);
-	
+
+	RS485_Init(&huart2);
 
 	/******************************module模块初始化*****************************/
 

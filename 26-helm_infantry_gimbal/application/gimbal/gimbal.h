@@ -55,6 +55,7 @@ typedef struct
 	float current_angle_head;
 
 	float target_angle_neck;//rad
+	float current_angle_neck;
 
 	//用于传输底盘板子数据
 	float target_angle_yaw;//rad
@@ -65,6 +66,8 @@ typedef struct
 
 	float auto_yaw;//上位机传入
 	float auto_pitch_head;
+
+	float gimbal_follow;
 
 }__attribute__((packed)) gimbal_cmd_t;
 

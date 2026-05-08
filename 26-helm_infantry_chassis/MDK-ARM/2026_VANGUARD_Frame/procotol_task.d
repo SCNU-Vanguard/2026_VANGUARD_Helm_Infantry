@@ -16,7 +16,8 @@
   ..\Middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS_V2\cmsis_os2.h \
   ..\application\communication_bond\procotol_task.h \
   ..\application\communication_bond\procotol.h \
-  ..\module\message_center\message_center.h ..\module\rs485\rs485.h \
+  ..\module\message_center\message_center.h \
+  ..\module\defense_center\defense_center.h ..\module\rs485\rs485.h \
   ..\Core\Inc\main.h ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
   ..\Core\Inc\stm32h7xx_hal_conf.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h \

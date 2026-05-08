@@ -23,6 +23,7 @@
 #include "main.h"
 #include "cmsis_os.h"
 
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 /******************************这里是塞💩的地方，请随便塞💩*****************************/
@@ -31,6 +32,9 @@
 #include "buzzer.h"
 #include "ws2812.h"
 #include "wfly_control.h"
+
+#include "rs485.h"
+#include "referee_task.h"
 
 /******************************这里是塞💩的地方，请随便塞💩*****************************/
 /* USER CODE END Includes */
@@ -64,10 +68,21 @@ const osThreadAttr_t defaultTask_attributes = {
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
-
+osThreadId_t UI_TaskHandle;
+uint32_t UI_TaskBuffer[4*128];
+StaticTask_t UI_TaskControlBlock;
+const osThreadAttr_t UI_Task_attributes = {
+    .name = "UI_Task",
+    .cb_mem = &UI_TaskControlBlock,
+    .cb_size = sizeof(UI_TaskControlBlock),
+    .stack_mem = &UI_TaskBuffer[0],
+    .stack_size = sizeof(UI_TaskBuffer),
+    .priority = (osPriority_t)osPriorityNormal,
+};
 /* USER CODE END FunctionPrototypes */
 
 void StartDefaultTask(void *argument);
+void Start_UI_Task(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -101,6 +116,8 @@ void MX_FREERTOS_Init(void) {
   /* creation of defaultTask */
   defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
 
+	 UI_TaskHandle = osThreadNew(Start_UI_Task, NULL, &UI_Task_attributes);
+
   /* USER CODE BEGIN RTOS_THREADS */
 	/* add threads, ... */
   /* USER CODE END RTOS_THREADS */
@@ -132,40 +149,6 @@ void StartDefaultTask(void *argument)
 	for (;;)
 	{
 		static uint8_t music_lock = 0;
-//		if (default_init_flag == 0)
-//		{
-//			if (rc_data->online == 0)
-//			{
-//				Buzzer_Play(No_RC_sound, 0);
-//				music_lock = 1;
-//			}
-//			else if (rc_data->online == 1)
-//			{
-//				Buzzer_Play(Yes_RC_sound, 0);
-//				music_lock = 0;
-//			}
-//			default_init_flag = 1;
-//		}
-//		else
-//		{
-//			if (rc_data->online == 0)
-//			{
-//				if (music_lock == 0)
-//				{
-//					Buzzer_Play(No_RC_sound, 0);
-//					music_lock = 1;
-//				}
-//			}
-//			else if (rc_data->online == 1)
-//			{
-//				if (music_lock == 1)
-//				{
-//					Buzzer_Play(Yes_RC_sound, 0);
-//					music_lock = 0;
-//				}
-//			}
-//		}
-/////////////////////////////////
 		beat++;
 		if ((beat % 120000) == 0)
 		{
@@ -180,14 +163,8 @@ void StartDefaultTask(void *argument)
 			Buzzer_Play(Call_Airsupport_sound, 0);
 		}
 
-		//有💩		
-		//    uint32_t rand_data = 0;
-		//    HAL_RNG_GenerateRandomNumber(&hrng, (uint32_t*)&rand_data);
-		//	
-		//		if(rand_data == 0xFFFFFFFF)
-		//		{
-		//			Buzzer_Play(Call_Airsupport_sound, 0);
-		//		}
+    
+
 
 		osDelay(1);
 	}
@@ -197,5 +174,25 @@ void StartDefaultTask(void *argument)
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
 /******************************这里是塞💩的地方，请随便塞💩*****************************/
+void Start_UI_Task(void *argument)
+{
+  /* USER CODE BEGIN Start_UI_Task */
+  osDelay(1500);
+  User_UI_Init();
+  /* Infinite loop */
+  for (;;)
+  {
+
+    //ui
+    if(uart2_rx_message.ui_refresh_key == 1)
+    {
+        User_UI_Init();
+        osDelay(1000);
+    }
+    
+    UI_Task();
+  }
+  /* USER CODE END Start_UI_Task */
+}
 /* USER CODE END Application */
 

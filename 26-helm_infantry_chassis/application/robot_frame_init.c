@@ -35,13 +35,12 @@
 #include "remote_control.h"
 #include "wfly_control.h"
 #include "vofa.h"
-#include "referee.h"
+#include "referee_task.h"
+
 
 #include "bsp_dwt.h"
 #include "bsp_usart.h"
 #include "rs485.h"
-
-Referee_InfoTypedef	*referee_data;
 
 
 static void Frame_MCU_Init(void)
@@ -64,8 +63,7 @@ static void Frame_Device_Init(void)
 	// BMI088_Init(&hspi2,0);
 	bmi088_h7 = BMI088_Register(&bmi088_init_h7);
 
-	HAL_UART_Receive_IT(&huart2, &uart2_current_byte, 1); // 开启UART2接收中断
-	//referee_data = Referee_Init(&huart1);
+	RS485_Init(&huart2);
 
 	/******************************module模块初始化*****************************/
 
@@ -77,7 +75,7 @@ static void Frame_Device_Init(void)
 
 	Shoot_Init( );
 
-
+	referee_outer_info = UI_Task_Init(&huart1, &referee_outer_interactive);
 
 	/******************************application组件初始化*****************************/
 }

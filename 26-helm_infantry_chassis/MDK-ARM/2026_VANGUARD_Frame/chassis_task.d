@@ -14,9 +14,7 @@
   ..\Middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS_V2\cmsis_os.h \
   ..\Middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS_V2\cmsis_os2.h \
   ..\application\chassis\chassis_task.h ..\application\chassis\chassis.h \
-  ..\application\robot_frame_config.h \
-  ..\module\message_center\message_center.h \
-  ..\module\motor\DM_motor\DM_motor.h ..\module\motor\drv_motor.h \
+  ..\module\motor\DJI_motor\DJI_motor.h ..\module\motor\drv_motor.h \
   ..\algorithm\controller\PID\pid.h C:\Keil5\ARM\ARMCLANG\include\math.h \
   ..\Middlewares\ST\ARM\DSP\Inc\arm_math.h \
   ..\Drivers\CMSIS\Include\cmsis_compiler.h \
@@ -62,4 +60,8 @@
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h \
   ..\Core\Inc\fdcan.h ..\module\defense_center\defense_center.h \
-  ..\bsp\DWT\bsp_dwt.h
+  ..\module\super_cap\super_cap.h \
+  C:\Keil5\ARM\ARMCLANG\include\stdbool.h \
+  ..\application\robot_frame_config.h \
+  ..\module\message_center\message_center.h \
+  ..\module\motor\DM_motor\DM_motor.h ..\bsp\DWT\bsp_dwt.h

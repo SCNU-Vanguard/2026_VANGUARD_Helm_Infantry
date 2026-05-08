@@ -51,4 +51,5 @@
   ..\Drivers\CMSIS\Include\cmsis_compiler.h \
   C:\Keil5\ARM\ARMCLANG\include\float.h \
   C:\Keil5\ARM\ARMCLANG\include\limits.h ..\bsp\CAN\bsp_can.h \
-  ..\Core\Inc\fdcan.h ..\module\defense_center\defense_center.h
+  ..\Core\Inc\fdcan.h ..\module\defense_center\defense_center.h \
+  ..\algorithm\basic_function\CRC.h

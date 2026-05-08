@@ -15,15 +15,15 @@
 #include <stdint.h>
 
 
-/* 控制模式选择 */
+/* 锟斤拷锟斤拷模式选锟斤拷 */
 typedef enum{
 
-	SHOOT_MODE_STOP = 0,//完全失能
+	SHOOT_MODE_STOP = 0,
 	SHOOT_MODE_REMOTE = 1,
 	SHOOT_MODE_KEYBOARD = 2,
 }shoot_mode_e;
 
-/* 火控选择 */
+
 typedef enum
 {
 	SHOOT_STOP = 0,
@@ -56,6 +56,6 @@ void Shoot_Set_All_Friction(int16_t speed);
 
 extern uint8_t manual_shoot_flag ;
 extern shoot_cmd_t *shoot_cmd;
-extern uint8_t fire_enable_flag;//允许拨弹标志位
+extern uint8_t fire_enable_flag;//锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷志位
 
 #endif /* __SHOOT_H__ */

@@ -11,6 +11,7 @@
 #include "DJI_motor.h"
 
 #include "bsp_dwt.h"
+#include "PowerCtrl.h"
 
 #define GM6020_VOLTAGE 1
 #define GM6020_CURRENT 1
@@ -576,6 +577,25 @@ void DJI_Motor_Control(DJI_motor_instance_t *motor_s)
 		/* ------------------------------handler------------------------------------*/
 		// 获取最终输出
 		motor->transmit_data.current = (int16_t) pid_ref;
+
+		// 分组填入发送数据
+		// group                                         = motor->sender_group;
+		// num                                           = motor->message_num;
+		// sender_assignment[group].tx_buff[2 * num]     = (uint8_t)(motor->transmit_data.current >> 8); // 低八位
+		// sender_assignment[group].tx_buff[2 * num + 1] = (uint8_t)(motor->transmit_data.current & 0x00ff); // 高八位
+		
+		// // 若该电机处于停止状态,直接将buff置零
+		// if (motor->motor_state_flag == MOTOR_DISABLE)
+		// {
+			// 	memset(sender_assignment[group].tx_buff + 2 * num, 0, sizeof(uint16_t));
+			// }
+	}
+		
+	chassis_power_control();
+
+	for (size_t i = 0 ; i < j ; ++i)
+	{
+		motor = dji_motor_instances[i];
 
 		// 分组填入发送数据
 		group                                         = motor->sender_group;

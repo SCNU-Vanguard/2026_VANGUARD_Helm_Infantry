@@ -26,21 +26,39 @@ static float gimbal_current_angle_feedback = 0.0f;
 static float gimbal_current_yaw_acc_feedback = 0.0f;
 
 /*云台电机*/
+// PID_t gimbal_dm6006_angle_pid = {
+//     .kp = 7.9,
+//     .ki = 0,
+//     .kd = 0,	
+//     .output_limit = 10.0f,//5.0f, 
+//     .integral_limit = 5.0f,
+//     .dead_band = 0.0f,
+// };
+
+// PID_t gimbal_dm6006_speed_pid = {
+//     .kp = 3.95,
+//     .ki = 0.021,
+//     .kd = 0,	
+//     .output_limit = 6.5f, 
+//     .integral_limit = 5.0f,
+//     .dead_band = 0.0f,
+// };
+
 PID_t gimbal_dm6006_angle_pid = {
-    .kp = 7.1,
+    .kp = 6.0,
     .ki = 0,
-    .kd = 0,	
-    .output_limit = 50.0f,//5.0f, 
+    .kd = 5,	
+    .output_limit = 20.0f,//5.0f, 
     .integral_limit = 5.0f,
     .dead_band = 0.0f,
 };
 
 PID_t gimbal_dm6006_speed_pid = {
-    .kp = 7,
-    .ki = 0.08,
+    .kp = 4.2,
+    .ki = 0.018,
     .kd = 0,	
-    .output_limit = 5.0f, 
-    .integral_limit = 50.0f,
+    .output_limit = 7.0f, 
+    .integral_limit = 5.0f,
     .dead_band = 0.0f,
 };
 
@@ -141,27 +159,30 @@ float yaw_tar =0;
 float yaw_current = 0;
 
 float torque = 0;
+float g6006_i_out = 0;
 
 //逆正顺负
 void Gimbal_DM6006_Ctrl(void)
 {
 
-//    gimbal_dm6006->motor_controller.speed_PID->kp = pid_yaw_p ;
-//    gimbal_dm6006->motor_controller.speed_PID->ki = pid_yaw_i;
-//    gimbal_dm6006->motor_controller.speed_PID->kd = pid_yaw_d;
+    // gimbal_dm6006->motor_controller.speed_PID->kp = pid_yaw_p ;
+    // gimbal_dm6006->motor_controller.speed_PID->ki = pid_yaw_i;
+    // gimbal_dm6006->motor_controller.speed_PID->kd = pid_yaw_d;
 
-//    gimbal_dm6006->motor_controller.angle_PID->kp = pid_yaw_p_out;
-//    gimbal_dm6006->motor_controller.angle_PID->ki = pid_yaw_i_out;
-//    gimbal_dm6006->motor_controller.angle_PID->kd = pid_yaw_d_out;
+    // gimbal_dm6006->motor_controller.angle_PID->kp = pid_yaw_p_out;
+    // gimbal_dm6006->motor_controller.angle_PID->ki = pid_yaw_i_out;
+    // gimbal_dm6006->motor_controller.angle_PID->kd = pid_yaw_d_out;
     /* 野指针保护 */
     if( gimbal_dm6006 == NULL || gimbal_cmd == NULL )
     {
         return;
     }
     
-		torque = gimbal_dm6006->receive_data.torque;
+    torque = gimbal_dm6006->receive_data.torque;
     yaw_current = gimbal_cmd->current_angle_yaw;
-		float tar_yaw = gimbal_cmd -> target_angle_yaw;
+    float tar_yaw = gimbal_cmd -> target_angle_yaw;
+    g6006_i_out = gimbal_dm6006->motor_controller.speed_PID->i_out;
+
 		
     gimbal_current_angle_feedback = gimbal_cmd->current_angle_yaw;
     gimbal_current_yaw_acc_feedback = gimbal_cmd->current_yaw_acc;
@@ -187,7 +208,7 @@ void Gimbal_DM6006_Ctrl(void)
 
         case GIMBAL_MODE_KEYBOARD:
             Gimbal_Enable( );
-            //DM_Motor_SetTar(gimbal_dm6006, gimbal_cmd->target_angle);
+            DM_Motor_SetTar(gimbal_dm6006, tar_yaw);
             break;
 
         default:

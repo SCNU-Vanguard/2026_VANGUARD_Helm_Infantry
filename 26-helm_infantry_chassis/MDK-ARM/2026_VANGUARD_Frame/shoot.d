@@ -3,7 +3,15 @@
   C:\Keil5\ARM\ARMCLANG\include\stdlib.h ..\application\shoot\shoot.h \
   C:\Keil5\ARM\ARMCLANG\include\stdint.h \
   ..\application\robot_frame_config.h ..\application\robot_frame_init.h \
-  ..\module\referee\referee.h ..\Core\Inc\main.h \
+  ..\algorithm\controller\PID\pid.h C:\Keil5\ARM\ARMCLANG\include\math.h \
+  ..\Middlewares\ST\ARM\DSP\Inc\arm_math.h \
+  ..\Drivers\CMSIS\Include\cmsis_compiler.h \
+  ..\Drivers\CMSIS\Include\cmsis_armclang.h \
+  C:\Keil5\ARM\ARMCLANG\include\arm_compat.h \
+  C:\Keil5\ARM\ARMCLANG\include\arm_acle.h \
+  C:\Keil5\ARM\ARMCLANG\include\float.h \
+  C:\Keil5\ARM\ARMCLANG\include\limits.h ..\module\motor\drv_motor.h \
+  ..\bsp\CAN\bsp_can.h ..\Core\Inc\main.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
   ..\Core\Inc\stm32h7xx_hal_conf.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h \
@@ -13,14 +21,10 @@
   ..\Drivers\CMSIS\Include\core_cm7.h \
   D:\Document\RM\2026_code\2026_VANGUARD_Helm_Infantry\26-helm_infantry_chassis\Drivers\CMSIS\Include\cmsis_version.h \
   D:\Document\RM\2026_code\2026_VANGUARD_Helm_Infantry\26-helm_infantry_chassis\Drivers\CMSIS\Include\cmsis_compiler.h \
-  D:\Document\RM\2026_code\2026_VANGUARD_Helm_Infantry\26-helm_infantry_chassis\Drivers\CMSIS\Include\cmsis_armclang.h \
-  C:\Keil5\ARM\ARMCLANG\include\arm_compat.h \
-  C:\Keil5\ARM\ARMCLANG\include\arm_acle.h \
   D:\Document\RM\2026_code\2026_VANGUARD_Helm_Infantry\26-helm_infantry_chassis\Drivers\CMSIS\Include\mpu_armv7.h \
   ..\Drivers\CMSIS\Device\ST\STM32H7xx\Include\system_stm32h7xx.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h \
   C:\Keil5\ARM\ARMCLANG\include\stddef.h \
-  C:\Keil5\ARM\ARMCLANG\include\math.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc_ex.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_gpio.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_gpio_ex.h \
@@ -45,12 +49,5 @@
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h \
-  ..\bsp\USART\bsp_usart.h ..\Core\Inc\usart.h \
-  ..\algorithm\controller\PID\pid.h \
-  ..\Middlewares\ST\ARM\DSP\Inc\arm_math.h \
-  ..\Drivers\CMSIS\Include\cmsis_compiler.h \
-  C:\Keil5\ARM\ARMCLANG\include\float.h \
-  C:\Keil5\ARM\ARMCLANG\include\limits.h ..\module\motor\drv_motor.h \
-  ..\bsp\CAN\bsp_can.h ..\Core\Inc\fdcan.h \
-  ..\module\motor\DJI_motor\DJI_motor.h \
+  ..\Core\Inc\fdcan.h ..\module\motor\DJI_motor\DJI_motor.h \
   ..\module\defense_center\defense_center.h

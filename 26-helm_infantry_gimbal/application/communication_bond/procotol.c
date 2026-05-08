@@ -26,18 +26,26 @@
 #include "INS.h"
 
 #include "rs485.h"
-
+#include "buzzer.h"
+#include "robot_frame_init.h"
 
 
 /* 485接收 */
 void Serial_485_Receive_Control(void)
 {
+    if (RS485_Is_Online() == 0)
+   {
+      //Buzzer_Play(Err_sound, 0);
+      gimbal_cmd->yaw_position = uart2_rx_message.yaw_position;
+      return;
+   }
     gimbal_cmd->yaw_position = uart2_rx_message.yaw_position;
 
 }
 
 void Serial_485_Send_Control(void)
 {
+
     /*底盘参数*/
     uart2_tx_message.chassis_vx = chassis_cmd -> vx ;
     uart2_tx_message.chassis_vy = chassis_cmd -> vy ;
@@ -59,10 +67,23 @@ void Serial_485_Send_Control(void)
     uart2_tx_message.INS_YAW_ACC = INS.Gyro[2];
     uart2_tx_message.gimbal_mode = gimbal_cmd -> gimbal_mode ;
     uart2_tx_message.neck_state  = gimbal_cmd -> neck_state  ;
+	uart2_tx_message.current_angle_neck = gimbal_cmd -> current_angle_neck;
 
     /*射击参数*/
     uart2_tx_message.shoot_frq = shoot_cmd -> shoot_frq ;
     uart2_tx_message.shoot_mode = shoot_cmd -> auto_state ;
+
+    /*UI标志*/
+    if(rc_data->key[0].z == 1 )
+    {
+        uart2_tx_message.ui_refresh_key = 1;
+    }
+    else
+    {
+        uart2_tx_message.ui_refresh_key = 0;
+    }
+    
+    
 
     uart2_send_data(&uart2_tx_message);
     uart2_transmit_control( );

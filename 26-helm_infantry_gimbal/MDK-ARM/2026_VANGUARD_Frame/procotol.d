@@ -59,4 +59,6 @@
   ..\Middlewares\ST\ARM\DSP\Inc\arm_math.h \
   ..\Drivers\CMSIS\Include\cmsis_compiler.h \
   C:\Keil5\ARM\ARMCLANG\include\float.h \
-  C:\Keil5\ARM\ARMCLANG\include\limits.h ..\module\rs485\rs485.h
+  C:\Keil5\ARM\ARMCLANG\include\limits.h ..\module\rs485\rs485.h \
+  ..\module\buzzer\buzzer.h ..\application\robot_frame_init.h \
+  ..\module\remote\VT03\remote_vt03.h ..\algorithm\basic_function\CRC.h

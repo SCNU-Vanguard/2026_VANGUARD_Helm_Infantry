@@ -17,6 +17,7 @@
 
 #include "DM_motor.h"
 #include "DJI_motor.h"
+#include "super_cap.h"
 
 #include "robot_frame_config.h"
 #include "pid.h"
@@ -29,13 +30,17 @@ chassis_cmd_t *chassis_cmd = &chassis_cmd_storage;//静态初始化，防止空�
 DJI_motor_instance_t *chassis_drive[4];//4*驱动轮   ，
 DJI_motor_instance_t *chassis_helm[2];//2*舵向电机
 
+Super_Capacitor_t *chassis_super_capacitor;
+
 float helm_zero[2] = {CHASSIS_GM6020_ZERO_1, CHASSIS_GM6020_ZERO_2};
 float helm_angle[2] = {-PI/4, 3*PI/4};//底盘小陀螺时舵向角度
 
+uint8_t chassis_follow_flag = 0;//底盘跟随标志
+
 
 PID_t chassis_3508_speed_pid = {
-    .kp = 23.0f,
-    .ki = 0.081f,
+    .kp = 12.0f,
+    .ki = 0.071f,
     .kd = 0.0f,	
     .output_limit = 15000.0f, 
     .integral_limit = 1000.0f,
@@ -43,7 +48,7 @@ PID_t chassis_3508_speed_pid = {
 };
 
 PID_t chassis_gm6020_angle_pid = {
-    .kp = 25,
+    .kp = 20,
     .ki = 0,
     .kd = 0,	
     .output_limit = 100.0f, 
@@ -62,7 +67,7 @@ PID_t chassis_gm6020_angle_pid = {
 
 PID_t chassis_gm6020_speed_pid = {
     .kp = 200,
-    .ki = 50,
+    .ki = 40,
     .kd = 0,	
     .output_limit = 20000.0f, 
     .integral_limit = 1000.0f,
@@ -71,14 +76,22 @@ PID_t chassis_gm6020_speed_pid = {
 
 /*底盘跟随*/
 PID_t chassis_follow_gimbal_angle_pid = {
-    .kp = 10,
+    .kp = 4,
     .ki = 0,
     .kd = 0,	
-    .output_limit = 8.0f, 
+    .output_limit = 5.0f, 
     .integral_limit = 0.0f,
     .dead_band = 0.0f,
 };
 
+static Super_Capacitor_t chassis_super_cap_cfg = {
+    
+    .can_init_config = {
+        .can_handle = &hfdcan1,
+        .tx_id = 0x06A,
+        .rx_id = 0x05A,
+    },
+};
 
 motor_init_config_t chassis_m3508_init = {
     
@@ -164,6 +177,17 @@ motor_init_config_t chassis_gm6020_init = {
 
 };
 
+
+
+/******************************底盘超级电容初始化函数*****************************/
+void Chassis_Super_Capacitor_Init(void)
+{
+    chassis_super_capacitor = Super_Capacitor_Init(&chassis_super_cap_cfg);
+    chassis_super_capacitor->transmit_data.refereeEnergyBuffer = 60; //初始裁判系统缓冲能量为60j
+    chassis_super_capacitor->transmit_data.refereePowerLimit = 45; //血量优先1级时功率限制为45W
+    chassis_super_capacitor->transmit_data.command.enableDCDC = 1; // 默认使能DCDC
+}
+
 /******************************底盘初始化函数*****************************/
 void Chassis_Init(void)
 {
@@ -190,7 +214,9 @@ void Chassis_Init(void)
         DJI_Motor_Enable(chassis_helm[i]);
     }
     
+    Chassis_Super_Capacitor_Init();
 }
+
 
 void Chassis_Enable(void)
 {
@@ -223,7 +249,6 @@ void Chassis_Disable(void)
         chassis_helm[i]->motor_controller.angle_PID->output = 0.0f;
         chassis_helm[i]->motor_controller.speed_PID->output = 0.0f;
     }
-
 }
 
 
@@ -273,6 +298,12 @@ static void Chassis_Follow(chassis_cmd_t *cmd,float gimbal_current_angle , float
         error_angle += 2 * PI;
     }
     cmd->vw_follow = PID_Position(&chassis_follow_gimbal_angle_pid, error_angle , 0.0f);
+		
+		if( fabs(cmd->vw_follow) < 0.3)//停车补偿
+		{
+			cmd->vw_follow = 0;
+		}
+			
 
     if( cmd->vw != 0.0f )
     {
@@ -286,6 +317,8 @@ static void Chassis_Follow(chassis_cmd_t *cmd,float gimbal_current_angle , float
     * @brief 两舵轮两全解算
     * @param none
 */
+
+
 static void Chassis_Calculate(chassis_cmd_t *cmd)
 {
     float vx = cmd->vx;
@@ -303,13 +336,22 @@ static void Chassis_Calculate(chassis_cmd_t *cmd)
 
 
     //////////////   底盘跟随   //////////////
-    if( gimbal_cmd->neck_state == NECK_STAND )//抬头时底盘跟随
+    if( gimbal_cmd->neck_state == NECK_STAND && gimbal_cmd->current_angle_neck < NECK_STAND_THRESHOLD)//抬头时底盘跟随
     {
+        chassis_follow_flag = 1; 
         Chassis_Follow(cmd, gimbal_dm6006->receive_data.position, CHASSIS_FOLLOW_FORWARD_ZERO);
     }
-    else if( gimbal_cmd->neck_state == NECK_LAY )//缩头时底盘不跟随
+    else if( gimbal_cmd->neck_state == NECK_LAY && gimbal_cmd->current_angle_neck < NECK_LAY_THRESHOLD )//缩头时
     {
+        chassis_follow_flag = 1;
         Chassis_Follow(cmd, gimbal_dm6006->receive_data.position, CHASSIS_GIMBAL_LAY_ZERO);
+    }
+    else 
+    {
+        chassis_follow_flag = 0;
+        cmd->vw_follow = 0;
+        chassis_follow_gimbal_angle_pid.output = 0;
+        chassis_follow_gimbal_angle_pid.i_out = 0;
     }
 
 
@@ -320,7 +362,6 @@ static void Chassis_Calculate(chassis_cmd_t *cmd)
             vx_total = vx_chassis - vw * CHASSIS_RADIUS * sinf( helm_angle[i] );
             vy_total = vy_chassis + vw * CHASSIS_RADIUS * cosf( helm_angle[i] );
             speed_helm[i] = sqrtf(vx_total * vx_total + vy_total * vy_total);//线速度 ???
-    
     
             //角度处理
             temp_angle[i] = - atan2f(vy_total, vx_total);//顺时针编码值为正
@@ -344,17 +385,38 @@ static void Chassis_Calculate(chassis_cmd_t *cmd)
                 speed_helm[i] = -speed_helm[i];
             }
 						
-//            if(vx != 0 || vy != 0 || cmd->vw != 0)
-//            {
-                target_angle[i] = chassis_helm[i]->receive_data.ecd * ECD_2_RAD + angle_diff; 
-//            }
+            if(vx != 0 || vy != 0 || vw != 0 )
+            {
+                target_angle[i] = chassis_helm[i]->receive_data.ecd * ECD_2_RAD + angle_diff;
+            }
+            else
+            {
+                target_angle[i] = chassis_helm[i]->receive_data.ecd * ECD_2_RAD;
+            }
+							
 
-//            else////////    维持当前舵向    ///////////
-//            {
-//                target_angle[i] = chassis_helm[i]->receive_data.ecd * ECD_2_RAD ; 
-//            }
+//           else////////    跟随云台舵向    ///////////
+//           {
+//                float follow_angle_error = -(gimbal_dm6006->receive_data.position - CHASSIS_X_GIMBAL_ZERO) - current_angle[i];
+//                while (follow_angle_error > PI)
+//                    follow_angle_error -= 2 * PI;
+//                while (follow_angle_error < -PI)
+//                    follow_angle_error += 2 * PI;
+//                //90度处理，速度反转
+//                if (follow_angle_error > PI / 2)
+//                {
+//                    follow_angle_error -= PI;
+//                    speed_helm[i] = -speed_helm[i];
+//                }
+//                else if (follow_angle_error < -PI / 2)
+//                {
+//                    follow_angle_error += PI;
+//                    speed_helm[i] = -speed_helm[i];
+//                }
+//                target_angle[i] = chassis_helm[i]->receive_data.ecd * ECD_2_RAD + follow_angle_error; 
+//           }
         }
-   
+
     
     //////////////   驱动轮解算   //////////////
     //舵轮
@@ -370,7 +432,7 @@ static void Chassis_Calculate(chassis_cmd_t *cmd)
         DJI_Motor_Set_Ref(chassis_drive[i], wheel_speed[i]);
     }
 
-    //舵轮舵向
+    // //舵轮舵向
     for(uint8_t i = 0; i < 2; ++i)
     {
         DJI_Motor_Set_Ref(chassis_helm[i], target_angle[i]);

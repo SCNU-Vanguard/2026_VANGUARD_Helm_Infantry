@@ -1,6 +1,23 @@
 2026_vanguard_frame/robot_frame_init.o: ..\application\robot_frame_init.c \
   ..\application\robot_frame_init.h \
-  C:\Keil5\ARM\ARMCLANG\include\stdint.h ..\module\referee\referee.h \
+  C:\Keil5\ARM\ARMCLANG\include\stdint.h \
+  ..\application\robot_frame_config.h \
+  ..\application\chassis\chassis_task.h \
+  ..\application\gimbal\gimbal_task.h ..\application\shoot\shoot_task.h \
+  ..\application\alarm_system\daemon_task.h \
+  ..\application\INS\INS_task.h \
+  ..\application\communication_bond\procotol_task.h \
+  ..\application\chassis\chassis.h ..\module\motor\DJI_motor\DJI_motor.h \
+  ..\module\motor\drv_motor.h C:\Keil5\ARM\ARMCLANG\include\stdlib.h \
+  C:\Keil5\ARM\ARMCLANG\include\string.h \
+  ..\algorithm\controller\PID\pid.h C:\Keil5\ARM\ARMCLANG\include\math.h \
+  ..\Middlewares\ST\ARM\DSP\Inc\arm_math.h \
+  ..\Drivers\CMSIS\Include\cmsis_compiler.h \
+  ..\Drivers\CMSIS\Include\cmsis_armclang.h \
+  C:\Keil5\ARM\ARMCLANG\include\arm_compat.h \
+  C:\Keil5\ARM\ARMCLANG\include\arm_acle.h \
+  C:\Keil5\ARM\ARMCLANG\include\float.h \
+  C:\Keil5\ARM\ARMCLANG\include\limits.h ..\bsp\CAN\bsp_can.h \
   ..\Core\Inc\main.h ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
   ..\Core\Inc\stm32h7xx_hal_conf.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h \
@@ -10,14 +27,10 @@
   ..\Drivers\CMSIS\Include\core_cm7.h \
   D:\Document\RM\2026_code\2026_VANGUARD_Helm_Infantry\26-helm_infantry_chassis\Drivers\CMSIS\Include\cmsis_version.h \
   D:\Document\RM\2026_code\2026_VANGUARD_Helm_Infantry\26-helm_infantry_chassis\Drivers\CMSIS\Include\cmsis_compiler.h \
-  D:\Document\RM\2026_code\2026_VANGUARD_Helm_Infantry\26-helm_infantry_chassis\Drivers\CMSIS\Include\cmsis_armclang.h \
-  C:\Keil5\ARM\ARMCLANG\include\arm_compat.h \
-  C:\Keil5\ARM\ARMCLANG\include\arm_acle.h \
   D:\Document\RM\2026_code\2026_VANGUARD_Helm_Infantry\26-helm_infantry_chassis\Drivers\CMSIS\Include\mpu_armv7.h \
   ..\Drivers\CMSIS\Device\ST\STM32H7xx\Include\system_stm32h7xx.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h \
   C:\Keil5\ARM\ARMCLANG\include\stddef.h \
-  C:\Keil5\ARM\ARMCLANG\include\math.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc_ex.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_gpio.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_gpio_ex.h \
@@ -42,28 +55,32 @@
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h \
-  ..\bsp\USART\bsp_usart.h ..\Core\Inc\usart.h \
-  ..\application\robot_frame_config.h \
-  ..\application\chassis\chassis_task.h \
-  ..\application\gimbal\gimbal_task.h ..\application\shoot\shoot_task.h \
-  ..\application\alarm_system\daemon_task.h \
-  ..\application\INS\INS_task.h \
-  ..\application\communication_bond\procotol_task.h \
-  ..\application\chassis\chassis.h ..\application\gimbal\gimbal.h \
-  ..\module\motor\DM_motor\DM_motor.h ..\module\motor\drv_motor.h \
-  C:\Keil5\ARM\ARMCLANG\include\stdlib.h \
-  C:\Keil5\ARM\ARMCLANG\include\string.h \
-  ..\algorithm\controller\PID\pid.h \
-  ..\Middlewares\ST\ARM\DSP\Inc\arm_math.h \
-  ..\Drivers\CMSIS\Include\cmsis_compiler.h \
-  C:\Keil5\ARM\ARMCLANG\include\float.h \
-  C:\Keil5\ARM\ARMCLANG\include\limits.h ..\bsp\CAN\bsp_can.h \
   ..\Core\Inc\fdcan.h ..\module\defense_center\defense_center.h \
-  ..\application\shoot\shoot.h ..\application\alarm_system\daemon.h \
-  ..\application\INS\INS.h ..\application\communication_bond\procotol.h \
-  ..\module\imu\bmi088.h ..\bsp\PWM\bsp_pwm.h ..\Core\Inc\tim.h \
-  ..\bsp\SPI\bsp_spi.h ..\Core\Inc\spi.h ..\bsp\GPIO\bsp_gpio.h \
-  ..\Core\Inc\gpio.h ..\module\led\WS2812\ws2812.h \
-  ..\module\buzzer\buzzer.h ..\module\remote\DT7\remote_control.h \
-  ..\module\remote\WFLY\wfly_control.h ..\module\vofa\vofa.h \
+  ..\module\super_cap\super_cap.h \
+  C:\Keil5\ARM\ARMCLANG\include\stdbool.h ..\application\gimbal\gimbal.h \
+  ..\module\motor\DM_motor\DM_motor.h ..\application\shoot\shoot.h \
+  ..\application\alarm_system\daemon.h ..\application\INS\INS.h \
+  ..\application\communication_bond\procotol.h ..\module\imu\bmi088.h \
+  ..\bsp\PWM\bsp_pwm.h ..\Core\Inc\tim.h ..\bsp\SPI\bsp_spi.h \
+  ..\Core\Inc\spi.h ..\bsp\GPIO\bsp_gpio.h ..\Core\Inc\gpio.h \
+  ..\module\led\WS2812\ws2812.h ..\module\buzzer\buzzer.h \
+  ..\module\remote\DT7\remote_control.h ..\bsp\USART\bsp_usart.h \
+  ..\Core\Inc\usart.h ..\module\remote\WFLY\wfly_control.h \
+  ..\module\vofa\vofa.h ..\application\Referee_UI\referee_task.h \
+  ..\application\Referee_UI\rm_referee.h \
+  ..\application\Referee_UI\referee_protocol.h \
+  C:\Keil5\ARM\ARMCLANG\include\stdarg.h \
+  C:\Keil5\ARM\ARMCLANG\include\stdio.h \
+  ..\algorithm\basic_function\user_lib.h \
+  ..\Middlewares\Third_Party\FreeRTOS\Source\include\FreeRTOS.h \
+  ..\Core\Inc\FreeRTOSConfig.h \
+  ..\Middlewares\Third_Party\FreeRTOS\Source\include\projdefs.h \
+  ..\Middlewares\Third_Party\FreeRTOS\Source\include\portable.h \
+  ..\Middlewares\Third_Party\FreeRTOS\Source\include\deprecated_definitions.h \
+  ..\Middlewares\Third_Party\FreeRTOS\Source\portable\RVDS\ARM_CM4F\portmacro.h \
+  ..\Middlewares\Third_Party\FreeRTOS\Source\include\mpu_wrappers.h \
+  ..\Middlewares\Third_Party\FreeRTOS\Source\include\task.h \
+  ..\Middlewares\Third_Party\FreeRTOS\Source\include\list.h \
+  ..\Middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS_V2\cmsis_os.h \
+  ..\Middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS_V2\cmsis_os2.h \
   ..\bsp\DWT\bsp_dwt.h ..\module\rs485\rs485.h

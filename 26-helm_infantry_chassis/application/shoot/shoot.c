@@ -29,10 +29,10 @@
 
  PID_t shoot_2006_speed_pid = {
      .kp = 10.0f,
-     .ki = 1.0f,
+     .ki = 0.1f,
      .kd = 0.1f,
-     .output_limit = 9000.0f,
-     .integral_limit = 9000.0f,
+     .output_limit = 10000.0f,
+     .integral_limit = 10000.0f,
      .dead_band = 0.0f,
  };
 

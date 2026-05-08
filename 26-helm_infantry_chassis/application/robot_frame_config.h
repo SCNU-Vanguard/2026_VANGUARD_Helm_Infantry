@@ -44,6 +44,8 @@
 #define CHASSIS_FORWARD_ZERO            2.84408951f //底盘正向向前时云台电机零点 rad
 #define CHASSIS_FOLLOW_FORWARD_ZERO    0.45401692f
 #define CHASSIS_GIMBAL_LAY_ZERO         2.09942722f
+#define CHASSIS_X_GIMBAL_ZERO          1.25582123f //底盘小陀螺时云台电机零点 rad
+
 
 
 #define CHASSIS_RADIUS         0.280f //底盘半径 m           280mm
@@ -56,7 +58,8 @@
 /*云台相关参数*/
 #define GIMBAL_NECK_ZERO 0.0f
 #define GIMBAL_HEAD_ZERO 0.0f 
-
+#define NECK_LAY_THRESHOLD 0.95f //rad,脖子小于该值时认为缩头 
+#define NECK_STAND_THRESHOLD 0.5f
 
 /*射击相关参数*/
 #define SHOOT_V 8000  //射击速度 rpm

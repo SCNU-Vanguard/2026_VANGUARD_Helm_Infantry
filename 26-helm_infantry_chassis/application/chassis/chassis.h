@@ -14,6 +14,8 @@
 
 #include <stdint.h>
 
+#include "DJI_motor.h"
+#include "super_cap.h"
 #include "robot_frame_config.h"
 
 
@@ -56,5 +58,8 @@ void Chassis_Disable(void);
 void Chassis_Ctrl(void);
 
 extern chassis_cmd_t *chassis_cmd;//底盘相关控制指令
+extern DJI_motor_instance_t *chassis_drive[4];//4*驱动轮
+extern DJI_motor_instance_t *chassis_helm[2];//2*舵向电机
+extern Super_Capacitor_t *chassis_super_capacitor;
 
 #endif /* __CHASSIS_H__ */

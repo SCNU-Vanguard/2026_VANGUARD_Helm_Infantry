@@ -75,18 +75,18 @@
 #define REMOTE_CHASSIS_SENSITIVITY_VY 0.0013f
 #define REMOTE_CHASSIS_SENSITIVITY_VW 0.006f 
 
-#define REMOTE_YAW_SENSITIVITY         0.00001f //云台yaw轴灵敏度
-#define REMOTE_PITCH_SENSITIVITY       0.00001f //云台pitch轴灵敏度
+#define REMOTE_YAW_SENSITIVITY         0.000005f //云台yaw轴灵敏度
+#define REMOTE_PITCH_SENSITIVITY       0.000005f //云台pitch轴灵敏度
 
 #define REMOTE_SHOOT_SENSITIVITY       0.00833f //射击频率灵敏度 ( 5/600 )
 #define KEYBOARD_SHOOT_SENSITIVITY     10.0f 
 
-#define KEYBOARD_CHASSIS_SENSITIVITY_VX 3.0f //底盘线速度灵敏度
-#define KEYBOARD_CHASSIS_SENSITIVITY_VY 3.0f
-#define KEYBOARD_CHASSIS_SENSITIVITY_VW 1.5f
+#define KEYBOARD_CHASSIS_SENSITIVITY_VX 1.0f //底盘线速度灵敏度
+#define KEYBOARD_CHASSIS_SENSITIVITY_VY 1.0f
+#define KEYBOARD_CHASSIS_SENSITIVITY_VW 3.5f
 
-#define KEYBOARD_YAW_SENSITIVITY         0.0003f //云台yaw轴灵敏度
-#define KEYBOARD_PITCH_SENSITIVITY       0.0003f //云台pitch轴灵敏度
+#define KEYBOARD_YAW_SENSITIVITY         0.000018f //云台yaw轴灵敏度
+#define KEYBOARD_PITCH_SENSITIVITY       0.000015f //云台pitch轴灵敏度
 
 
 ////////////////////////////////// 自定义参数 /////////////////////////////////

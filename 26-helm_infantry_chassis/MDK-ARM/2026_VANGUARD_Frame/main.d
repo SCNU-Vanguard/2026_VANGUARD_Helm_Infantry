@@ -55,5 +55,4 @@
   ..\Core\Inc\dma.h ..\Core\Inc\fdcan.h ..\Core\Inc\i2c.h \
   ..\Core\Inc\rng.h ..\Core\Inc\spi.h ..\Core\Inc\tim.h \
   ..\Core\Inc\usart.h ..\Core\Inc\gpio.h \
-  ..\application\robot_frame_init.h ..\module\referee\referee.h \
-  ..\bsp\USART\bsp_usart.h
+  ..\application\robot_frame_init.h
